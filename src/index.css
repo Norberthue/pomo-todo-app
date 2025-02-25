@@ -1,8 +1,48 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+html {
+    font-family: "Roboto", serif;
+}
 
 .bg-blur1{
-    background-color: rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(100px);
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(25px);
    
 }
+
+.bg-blur2{
+    background-color: rgba(255, 255, 255, 0.553);
+    backdrop-filter: blur(10px);
+   
+}
+
+
+.content-shadow {
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2)
+}
+
+
+@layer utilities {
+    .scrollbar::-webkit-scrollbar {
+      width: 20px;
+      height: 10px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      
+    }
+    .scrollbar::-webkit-scrollbar-track {
+      border-radius: 100vh;
+      background: #00000015;
+    }
+  
+    .scrollbar::-webkit-scrollbar-thumb {
+      background: #888888;
+      border-radius: 100vh;
+    }
+  
+    .scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #696969;
+    }
+  }
