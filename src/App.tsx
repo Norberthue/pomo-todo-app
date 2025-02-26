@@ -6,8 +6,6 @@ import ShowBoard from './components/ShowBoard'
 import Header from './components/Header'
 
 
-
-
 const App: React.FC = () => {
   const [dataBoard, setDataBoard] = useState<Board[]>([])
   const [dataColumn, setDataColumn] = useState<Column[]>([])
@@ -26,21 +24,21 @@ const App: React.FC = () => {
     if (getTask) setDataTask(JSON.parse(getTask))
   },[])
 
-  useEffect(() =>{
+  useEffect(() => {
       localStorage.setItem('board', JSON.stringify(dataBoard))
   },[dataBoard])
 
-  useEffect(() =>{
+  useEffect(() => {
     localStorage.setItem('col', JSON.stringify(dataColumn))
   },[dataColumn])
 
-  useEffect(() =>{
+  useEffect(() => {
     localStorage.setItem('task', JSON.stringify(dataTask))
   },[dataTask])
 
-  useEffect(() =>{
+  useEffect(() => {
     localStorage.setItem('mode', JSON.stringify(darkMode))
-},[darkMode])
+  },[darkMode])
 
   
   const addBoard = (title: string) => {
@@ -57,7 +55,7 @@ const App: React.FC = () => {
 
  
   return (
-   <div className={` transition-all duration-300 ${darkMode ? 'text-white bg-[#1d2125]' : 'text-gray-600 bg-[#ffffff85]'}`}>
+   <div className={` transition-all duration-300 min-h-screen ${darkMode ? 'text-white bg-[#1d2125]' : 'text-gray-600 bg-[#ffffff85]'}`}>
     <Header darkMode={darkMode}  setDarkMode={setDarkMode}></Header>
     <Routes>
       <Route path='/' element={<Boards darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
