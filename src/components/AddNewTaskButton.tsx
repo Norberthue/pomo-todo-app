@@ -25,7 +25,7 @@ const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) =
                 <form className={` flex flex-col gap-2`}onSubmit={(e) => {handleTaskSubmit(e, column.title)}}>
                     <input autoFocus placeholder='Type name of task...' 
                         className={`${darkMode ? ' bg-[#34383b] text-white' :
-                            'bg-gray-300 text-black placeholder-gray-600'} rounded-lg outline-none 
+                            'bg-gray-200 text-black placeholder-gray-600'} rounded-lg outline-none 
                             text-sm pt-2 pb-5 pl-2 focus:ring-2 focus:ring-blue-500`} type='text' value={taskTitle} onChange={(e) => {setTaskTitle(e.target.value)}} >
                     </input>
                     <div className='flex items-center gap-4'>

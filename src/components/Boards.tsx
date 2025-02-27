@@ -32,7 +32,8 @@ const Boards = ({ addBoard, dataBoard, darkMode}: BoardsForms) => {
           <div className="">
             <form className="relative">
                 <h1 className="text-sm absolute -top-5">Search</h1>
-                <input placeholder="Search templates" className={`placeholder-gray-500  focus:ring-2 focus:ring-blue-500 duration-100 w-[300px] rounded-sm pt-2 pb-2 pl-7 border-1 ${darkMode ? 'border-[#5a626957] bg-[#1d2125] ' : 'border-[#5a626957] bg-white'}  outline-none `}></input>
+                <input placeholder="Search templates" className={`placeholder-gray-500  focus:ring-2 focus:ring-blue-500 duration-100 
+                  w-[300px] rounded-sm pt-2 pb-2 pl-7 border-1 ${darkMode ? 'border-[#5a626957] bg-[#1d2125] ' : 'border-[#5a626957] bg-white'}  outline-none `}></input>
                 <i className="fa-solid fa-magnifying-glass text-[#5a626957]  absolute left-1 top-3 pl-1"></i>
             </form>
           </div>
