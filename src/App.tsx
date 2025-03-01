@@ -3,8 +3,6 @@ import Boards from './components/Boards'
 import  { Board, Column, Task } from  './Types'
 import { Routes, Route } from 'react-router-dom'
 import ShowBoard from './components/ShowBoard'
-import Header from './components/Header'
-
 
 const App: React.FC = () => {
   const [dataBoard, setDataBoard] = useState<Board[]>([])
@@ -12,6 +10,9 @@ const App: React.FC = () => {
   const [dataTask, setDataTask] = useState<Task[]>([])
   const [darkMode, setDarkMode] = useState(false)
 
+  console.log('board: ' + dataBoard)
+  console.log('col: ' + dataColumn)
+  console.log('task: ' + dataTask.map((task) => task.title))
 
   useEffect(() => {
     const getBoard = localStorage.getItem('board') 
@@ -41,25 +42,36 @@ const App: React.FC = () => {
   },[darkMode])
 
   
-  const addBoard = (title: string) => {
-    setDataBoard([...dataBoard , {id: dataBoard.length, title, columns: [], slug: title}])
+  const addBoard = (title: string, bg: string) => {
+    setDataBoard([...dataBoard , {id: dataBoard.length, title, columns: [], slug: title, bg}])
   } 
+
+  const deleteBoard = (id: number, dataSlug: string) => {
+    setDataBoard(dataBoard.filter((board) => board.id !== id))
+    setDataColumn(dataColumn.filter((col) => col.boardId !== dataSlug))
+    setDataTask(dataTask.filter((task) => task.boardId !== dataSlug))
+  }
 
   const addColumn = (title: string, boardId: string | null) => {
     setDataColumn([...dataColumn, { id: title, title, tasks: [], boardId }])
   }
 
-  const addTask = (title: string, columnId: string) => {
-    setDataTask([...dataTask, {id: columnId, title, description: '', completed: false, timer: 0 }])
+
+  const addTask = (title: string, columnId: string, boardId: string | null) => {
+    setDataTask([...dataTask, {id: columnId, title, description: '', completed: false, timer: 0 , boardId }])
   }
 
  
   return (
-   <div className={` transition-all duration-300 min-h-screen ${darkMode ? 'text-white bg-[#1d2125]' : 'text-gray-600 bg-[#ffffff85]'}`}>
-    <Header darkMode={darkMode}  setDarkMode={setDarkMode}></Header>
+   <div className={` transition-all duration-200 min-h-screen ${darkMode ? 'text-white bg-[#1d2125]' : 'text-gray-600 bg-[#ffffff85]'}`}>
+   <div className='hidden from-red-500 via-red-400 from-green-500 via-green-400 from-blue-500
+    via-blue-400 from-orange-500 via-orange-400 from-yellow-500 via-yellow-400 from-purple-500 via-purple-400 from-pink-500 via-pink-400
+    from-lime-500 via-lime-400 from-cyan-500 via-cyan-400 from-netural-500 via-netural-400'>
+
+   </div>
     <Routes>
-      <Route path='/' element={<Boards darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-      <Route path=':slug' element={<ShowBoard darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+      <Route path='/' element={<Boards setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
+      <Route path=':slug' element={<ShowBoard setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
     </Routes>
       
    </div>

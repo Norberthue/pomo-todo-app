@@ -3,6 +3,7 @@ export interface Board {
     title: string;
     columns: Column[];
     slug: string;
+    bg: string
 }
 
 export interface Column {
@@ -13,6 +14,7 @@ export interface Column {
 }
 
 export interface Task {
+    boardId: string | null
     id: string;
     title: string;
     description: string;

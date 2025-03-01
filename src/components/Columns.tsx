@@ -3,7 +3,7 @@ import Tasks from './Tasks';
 import AddNewTaskButton from './AddNewTaskButton';
 
 interface ColumnsForms {
-    addTask: (title: string, columnId: string) => void;
+    addTask: (title: string, columnId: string, boardId: string | null) => void;
     dataTask: Task[];
     dataColumn: Column[];
     board: Board | null;

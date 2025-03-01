@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Column } from '../Types'
 
 interface AddNewTaskButtonForms {
-    addTask: (title: string, columnId: string) => void;
+    addTask: (title: string, columnId: string, boardId: string | null) => void;
     darkMode: boolean;
     column: Column;
 }
@@ -11,10 +11,10 @@ const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) =
     const [taskTitle, setTaskTitle] = useState('')
     const [editId, setEditId] = useState('')  
     
-    const handleTaskSubmit = (e: React.FormEvent , id: string) => {
+    const handleTaskSubmit = (e: React.FormEvent , id: string , boardId: string | null) => {
         e.preventDefault()
         if (taskTitle.length > 0 ) {
-            addTask(taskTitle, id)
+            addTask(taskTitle, id, boardId)
             setTaskTitle('')
         }
     } 
@@ -22,7 +22,7 @@ const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) =
     return (
     <>
         {editId === column.id  ? 
-                <form className={` flex flex-col gap-2`}onSubmit={(e) => {handleTaskSubmit(e, column.title)}}>
+                <form className={` flex flex-col gap-2`}onSubmit={(e) => {handleTaskSubmit(e, column.title , column.boardId)}}>
                     <input autoFocus placeholder='Type name of task...' 
                         className={`${darkMode ? ' bg-[#34383b] text-white' :
                             'bg-gray-200 text-black placeholder-gray-600'} rounded-lg outline-none 

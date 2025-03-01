@@ -1,13 +1,13 @@
-import React from 'react'
-
+import { Board } from '../Types'
 interface HeaderForms {
     darkMode: boolean
     setDarkMode: (darkmode: boolean) => void
+    board: Board
 }
 
-const Header = ({darkMode  ,setDarkMode}: HeaderForms) => {
+const Header = ({darkMode  ,setDarkMode, board}: HeaderForms) => {
   return (
-    <div className='flex text-sm sm:text-2xl items-center justify-between p-10 border-b-[1px] border-[#5a626957]'>
+    <div className={`flex text-sm sm:text-2xl bg-${board?.bg}-700  items-center justify-between p-10 border-b-[1px] border-[#5a626957]`}>
         <div className=''>
             <a href='/'>PomoTodo</a>
         </div>

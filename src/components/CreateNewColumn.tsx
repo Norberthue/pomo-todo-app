@@ -15,7 +15,7 @@ const CreateNewColumn = ({addColumn, darkMode, board}: CreateNewColumnForms) => 
     const handleSubmit = (e:React.FormEvent ) => {
         e.preventDefault()
         if (columnTitle.length > 0 && board) {
-            addColumn(columnTitle, board.slug)
+            addColumn(columnTitle, board.slug, )
             setColumnTitle('')
         }
     }
