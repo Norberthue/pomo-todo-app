@@ -38,7 +38,7 @@ const CreateNewTemplateModal = ({setOpenCreateBoard, setBackground, background, 
                     <div  onClick={() => {setBackground('pink')}} className={`bg-pink-400 ${background === 'pink' ? 'border-2 border-pink-700': ''} w-10 h-10 rounded-lg hover:scale-90 duration-200`}></div>
                     <div  onClick={() => {setBackground('lime')}} className={` ${background === 'lime' ? 'border-2 border-lime-700': ''} bg-lime-400  w-10 h-10 place-self-end rounded-lg hover:scale-90 duration-200`}></div>
                     <div onClick={() => {setBackground('cyan')}} className={`bg-cyan-400 ${background === 'cyan' ? 'border-2 border-cyan-700': ''} w-10 h-10 place-self-end rounded-lg hover:scale-90 duration-200`}></div>
-                    <div onClick={() => {setBackground('neutral')}} className={`bg-neutral-300 ${background === 'neutral' ? 'border-2 border-neutral-700': ''} w-10 h-10 place-self-end rounded-lg hover:scale-90 duration-200`}></div>
+                    <div onClick={() => {setBackground('slate')}} className={`bg-slate-400 ${background === 'slate' ? 'border-2 border-slate-700': ''} w-10 h-10 place-self-end rounded-lg hover:scale-90 duration-200`}></div>
                 </div>
             </div>
             

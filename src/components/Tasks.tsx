@@ -10,7 +10,7 @@ const Tasks = ({darkMode , dataTask, column}: TasksForms) => {
   return (
     <>
         {dataTask.length >= 1 && dataTask.map((task, index) => (
-            task.id === column.title && (
+            task.colId === column.id && (
                 <div className={`${darkMode ? 'text-white bg-[#1d2125] hover:bg-[#2e3336] ' : 
                     'text-gray-500  hover:bg-gray-200 bg-white'} 
                     pt-2 pb-2  rounded-lg content-shadow`} key={index}>

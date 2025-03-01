@@ -3,6 +3,7 @@ import { Board, Column, Task } from '../Types'
 import { useParams } from 'react-router-dom'
 import CreateNewColumn from './CreateNewColumn';
 import Columns from './Columns';
+import Header from './Header';
 
 
 interface ShowBoardProps  {
@@ -22,7 +23,7 @@ const ShowBoard = ({dataBoard, dataColumn, addColumn, addTask, dataTask, darkMod
     
     
     useEffect(()=> {
-        const findDetail = dataBoard.filter((board) => board.slug === slug)
+        const findDetail = dataBoard.filter((board) => board.id === slug)
         if (findDetail.length > 0) {
             setBoard(findDetail[0])
         } else {
@@ -31,18 +32,10 @@ const ShowBoard = ({dataBoard, dataColumn, addColumn, addTask, dataTask, darkMod
     },[slug])
     const color = board?.bg
     return (
-    <div className={`flex flex-col min-h-screen gap-5 ${darkMode ? `bg-gradient-to-b from-30% from-${color}-500 via-50% via-${color}-400  to-black`
-    : `bg-gradient-to-b from-30% from-${color}-500 via-80% via-${color}-400  to-white`}  `}> 
-       <div className={`flex text-sm sm:text-2xl  items-center justify-between p-10 border-b-[1px] border-[#5a626957]`}>
-            <div className=''>
-                <a href='/'>PomoTodo</a>
-            </div>
-            <div className='flex gap-2'>
-                <button onClick={() => {setDarkMode(!darkMode)}}>{darkMode ? 'Theme 🌞' : 'Theme 🌙'}</button>
-                <h1>| Login</h1>
-            </div>
-        </div>
-        <div className='mt-5 ml-8 text-xl'>
+    <div className={`flex flex-col min-h-screen gap-5  transition-colors duration-500 bg-gradient-to-b  ${darkMode ? `from-20% from-${color}-900   via-${color}-800   to-${color}-500`
+    : `  from-20% from-${color}-500   via-${color}-400    to-${color}-300`}  `}> 
+       <Header darkMode={darkMode} setDarkMode={setDarkMode}></Header>
+        <div className='mt-5 ml-8 text-xl text-white'>
             <h1>{board?.title}</h1>
         </div>
         <div className='flex gap-3 ml-5  overflow-x-auto scrollbar  '>

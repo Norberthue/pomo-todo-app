@@ -15,9 +15,9 @@ const Columns = ({addTask , dataTask, dataColumn, board, darkMode}: ColumnsForms
     return (
         <>
             {dataColumn.length >= 1 && dataColumn.map((column) => (
-                column.boardId === board?.slug && (
-                    <div className={` w-[300px] flex-none  content-shadow  ${darkMode ? 'bg-[#0d0d0ed0] ' :
-                        'bg-gray-100'}  ml-2 self-baseline p-2 rounded-lg  flex flex-col `} key={column.id}>
+                column.boardId === board?.id && (
+                    <div className={` w-[300px] flex-none  content-shadow transition-all duration-500 ${darkMode ? 'bg-[#0d0d0eb6] ' :
+                        'bg-[#d8d8d8a8]'}  ml-2 self-baseline p-2 rounded-lg  flex flex-col `} key={column.id}>
                         <h1 className='pt-1 pl-1 font-semibold'>{column.title}</h1>
                         <div className='flex flex-col pl-1 gap-2 mt-2'>
                             <Tasks dataTask={dataTask} darkMode={darkMode}  column={column}/>

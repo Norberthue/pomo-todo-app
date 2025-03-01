@@ -22,7 +22,7 @@ const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) =
     return (
     <>
         {editId === column.id  ? 
-                <form className={` flex flex-col gap-2`}onSubmit={(e) => {handleTaskSubmit(e, column.title , column.boardId)}}>
+                <form className={` flex flex-col gap-2`}onSubmit={(e) => {handleTaskSubmit(e, column.id , column.boardId)}}>
                     <input autoFocus placeholder='Type name of task...' 
                         className={`${darkMode ? ' bg-[#34383b] text-white' :
                             'bg-gray-200 text-black placeholder-gray-600'} rounded-lg outline-none 
@@ -38,7 +38,7 @@ const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) =
                     </div>   
                 </form> : 
                 <button onClick={() => {setEditId(column.id)}} 
-                    className={`${darkMode ? 'hover:bg-[#434647]' : 'hover:bg-[#c9cbcc]'} 
+                    className={`${darkMode ? 'hover:bg-[#2f3131]' : 'hover:bg-[#cfd1d1]'} 
                     pt-2 pb-2 rounded-lg pl-2 w-full h-full flex duration-200`}>
                     + Add new task
                 </button>

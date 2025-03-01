@@ -15,13 +15,13 @@ const CreateNewColumn = ({addColumn, darkMode, board}: CreateNewColumnForms) => 
     const handleSubmit = (e:React.FormEvent ) => {
         e.preventDefault()
         if (columnTitle.length > 0 && board) {
-            addColumn(columnTitle, board.slug, )
+            addColumn(columnTitle, board.id)
             setColumnTitle('')
         }
     }
 
     return (
-        <div className={`ml-2 self-baseline flex-none p-2 order-last w-[300px] rounded-lg  ${openCreateColumn ? '' : darkMode ? 'hover:bg-[#434647]' : 'hover:bg-[#c9cbcc]'} duration-150 ${darkMode ? 'bg-[#34383b]' : 'bg-gray-200'}`}>
+        <div className={`ml-2 self-baseline flex-none p-2 order-last w-[300px] rounded-lg transition-all duration-500  ${openCreateColumn ? '' : darkMode ? 'hover:bg-[#434647]' : 'hover:bg-[#c9cbcc]'} duration-150 ${darkMode ? 'bg-[#34383b]' : 'bg-gray-200'}`}>
             <button onClick={() => {setOpenCreateColumn(true)}} className={`${openCreateColumn ? 'hidden' : 'block'} w-full h-full flex`}>+ Add new column</button>
             <form className={`${openCreateColumn ? 'block' : 'hidden'} flex flex-col gap-2`} onSubmit={handleSubmit}>
                 <input autoFocus placeholder='Type name of column...' 
