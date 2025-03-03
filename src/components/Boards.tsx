@@ -84,7 +84,7 @@ const Boards = ({ addBoard, dataBoard, darkMode, deleteBoard, setDarkMode, updat
                           <h1 className="p-2 h-[60px] text-white">{data.title}</h1>
                         </Link>) : ( 
                         <form onSubmit={(e) => {handleChangeTemplateName(e)}} className=" text-white items-center flex gap-1">
-                          <input  value={updatedBoardTitle} onChange={(e) => {setUpdatedBoardTitle(e.target.value)}} autoFocus className={` mt-1 ml-1 placeholder-white border-2 border-[#5a626957]
+                          <input maxLength={38}  value={updatedBoardTitle} onChange={(e) => {setUpdatedBoardTitle(e.target.value)}} autoFocus className={` mt-1 ml-1 placeholder-white border-2 border-[#5a626957]
                               duration-100 
                             rounded-sm pt-1 pb-1 pl-2  outline-none `}/>
                           <div className="flex items-center  gap-1">

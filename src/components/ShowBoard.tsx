@@ -14,14 +14,19 @@ interface ShowBoardProps  {
     addTask: (title: string, columnId: string, boardId: string | null) => void;
     darkMode: boolean;
     setDarkMode: (set:boolean) => void 
+    deleteColumn: (id:string) => void
+    updateColumn: (id:string, newTitle:string) => void
+    updateTask: (id:string, newTitle:string) => void
+    deleteTask: (id:string) => void
+
 }
 
 
-const ShowBoard = ({dataBoard, dataColumn, addColumn, addTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
+const ShowBoard = ({dataBoard, dataColumn, addColumn, updateColumn, deleteColumn,  addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
     const {slug} = useParams()
     const [board, setBoard] = useState<Board | null>(null)
-    
-    
+    const color = board?.bg
+   
     useEffect(()=> {
         const findDetail = dataBoard.filter((board) => board.id === slug)
         if (findDetail.length > 0) {
@@ -30,17 +35,22 @@ const ShowBoard = ({dataBoard, dataColumn, addColumn, addTask, dataTask, darkMod
             window.location.href = '/'
         }
     },[slug])
-    const color = board?.bg
+
+    
+
+    
     return (
     <div className={`flex flex-col min-h-screen gap-5  transition-colors duration-500 bg-gradient-to-b  ${darkMode ? `from-20% from-${color}-900   via-${color}-800   to-${color}-500`
     : `  from-20% from-${color}-500   via-${color}-400    to-${color}-300`}  `}> 
        <Header darkMode={darkMode} setDarkMode={setDarkMode}></Header>
-        <div className='mt-5 ml-8 text-xl text-white'>
-            <h1>{board?.title}</h1>
+        <div className=' flex gap-5 mt-5 ml-8 text-xl items-center text-white'>
+        <ul className='list-disc ml-5'>
+            <li className="text-white font-semibold ">{board?.title}</li>
+        </ul>
         </div>
         <div className='flex gap-3 ml-5  overflow-x-auto scrollbar  '>
             <CreateNewColumn board={board} addColumn={addColumn} darkMode={darkMode}/>
-            <Columns board={board} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
+            <Columns board={board} deleteColumn={deleteColumn} updateTask={updateTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
         </div>
     </div>
   )

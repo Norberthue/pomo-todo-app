@@ -43,7 +43,7 @@ const CreateNewTemplateModal = ({setOpenCreateBoard, setBackground, background, 
             </div>
             
             <form onSubmit={handleSubmit} className="flex flex-col relative gap-2">
-                <input type='text' value={boardTitle} onChange={(e) => {setBoardTitle(e.target.value)}}  className={`border pl-2 pt-2 pb-2
+                <input type='text' maxLength={38} value={boardTitle} onChange={(e) => {setBoardTitle(e.target.value)}}  className={`border pl-2 pt-2 pb-2
                 outline-none  focus:ring-2 focus:ring-blue-500 duration-100 ${darkMode ? 'border-[#5a626957] bg-[#1d2125] ' : 'border-[#5a626957] bg-white'} `} placeholder="Title"></input>
                 <p className='absolute text-sm -top-6'>Name of template</p>
                 <button type="submit"className={`p-2 rounded-sm 

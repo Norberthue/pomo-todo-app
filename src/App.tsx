@@ -11,9 +11,9 @@ const App: React.FC = () => {
   const [dataTask, setDataTask] = useState<Task[]>([])
   const [darkMode, setDarkMode] = useState(false)
 
-  // console.log('board: ' + dataBoard)
-  // console.log('col: ' + dataColumn)
-  // console.log('task: ' + dataTask.map((task) => task.title))
+  console.log('board: ' + dataBoard)
+  console.log('col: ' + dataColumn)
+  console.log('task: ' + dataTask.map((task) => task.title))
 
   useEffect(() => {
     const getBoard = localStorage.getItem('board') 
@@ -42,6 +42,7 @@ const App: React.FC = () => {
     localStorage.setItem('mode', JSON.stringify(darkMode))
   },[darkMode])
 
+  // boards-------------------------------------------------
   const addBoard = (title: string, bg: string) => {
     setDataBoard([...dataBoard , {id: uuid(), title, slug: title, bg}])
   } 
@@ -55,15 +56,35 @@ const App: React.FC = () => {
   const updateBoard = (id:string, newTitle:string) => {
     setDataBoard(dataBoard.map((data) => (data.id === id ? {...data, title:newTitle } : data)))
   }
-
+  
+  //cols--------------------------------------------------------------
   const addColumn = (title: string, boardId: string | null) => {
     setDataColumn([...dataColumn, { id: uuid(), title, boardId }])
   }
 
+  const deleteColumn = (id:string) => {
+    setDataColumn(dataColumn.filter((data) => data.id !== id))
+    setDataTask(dataTask.filter((data) =>  data.colId !== id))
+  }
+
+  const updateColumn = (id:string, newTitle:string) => {
+    setDataColumn(dataColumn.map((data) => (data.id === id ? {...data, title: newTitle} : data)))
+  }
+
+  //tasks---------------------------------------------------------------
   const addTask = (title: string, columnId: string, boardId: string | null) => {
     setDataTask([...dataTask, {id: uuid(),boardId, colId: columnId, title, description: '', completed: false, timer: 0  }])
   }
 
+  const deleteTask = (id:string) => {
+    setDataTask(dataTask.filter((data) => data.id !== id))
+  }
+
+  const updateTask = (id:string, newTitle:string) => {
+    setDataTask(dataTask.map((data) => (data.id === id ? {...data, title:newTitle} : data)))
+  }
+
+  
  
   return (
    <div className={` transition-all duration-300 min-h-screen ${darkMode ? 'text-white bg-[#1d2125]' : 'text-gray-600 bg-[#ffffff85]'}`}>
@@ -80,8 +101,8 @@ const App: React.FC = () => {
 
    </div>
     <Routes>
-      <Route path='/' element={<Boards updateBoard={updateBoard } setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-      <Route path=':slug' element={<ShowBoard setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+      <Route path='/' element={<Boards updateBoard={updateBoard}  setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
+      <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
     </Routes>
       
    </div>

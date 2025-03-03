@@ -47,3 +47,27 @@ html {
       background: #696969;
     }
   }
+
+
+  @layer utilities {
+    .scrollbar2::-webkit-scrollbar {
+      width: 8px;
+      
+      
+      
+      
+    }
+    .scrollbar2::-webkit-scrollbar-track {
+      border-radius: 100vh;
+      background: #00000015;
+    }
+  
+    .scrollbar2::-webkit-scrollbar-thumb {
+      background: #888888;
+      border-radius: 100vh;
+    }
+  
+    .scrollbar2::-webkit-scrollbar-thumb:hover {
+      background: #696969;
+    }
+  }

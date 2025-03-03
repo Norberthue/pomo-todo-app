@@ -38,7 +38,7 @@ const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) =
                     </div>   
                 </form> : 
                 <button onClick={() => {setEditId(column.id)}} 
-                    className={`${darkMode ? 'hover:bg-[#2f3131]' : 'hover:bg-[#cfd1d1]'} 
+                    className={`${darkMode ? 'hover:bg-[#2f3131]' : 'hover:bg-gray-200'} 
                     pt-2 pb-2 rounded-lg pl-2 w-full h-full flex duration-200`}>
                     + Add new task
                 </button>
