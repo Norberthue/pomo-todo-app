@@ -13,9 +13,11 @@ interface ColumnsForms {
     updateColumn: (id:string, newTitle:string) => void
     updateTask: (id:string, newTitle:string) => void
     deleteTask: (id:string) => void
+    setActiveTask: (aa: number | null) => void 
+    onDropTask: (status:string, position:number) => void
 }
 
-const Columns = ({addTask , updateTask, deleteTask,  dataTask, dataColumn, board, deleteColumn,  updateColumn, darkMode}: ColumnsForms) => {
+const Columns = ({addTask , updateTask, deleteTask, setActiveTask,  onDropTask,  dataTask, dataColumn, board, deleteColumn,  updateColumn, darkMode}: ColumnsForms) => {
     const [updatedColumnTitle, setUpdatedColumnTitle] = useState('')
     const [columnId, setColumnId] = useState('') 
    
@@ -32,7 +34,7 @@ const Columns = ({addTask , updateTask, deleteTask,  dataTask, dataColumn, board
         <>
             {dataColumn.length >= 1 && dataColumn.map((column) => (
                 column.boardId === board?.id && (
-                    <div className={` w-[300px] overflow-y-auto scrollbar2  max-h-[80vh] flex-none   content-shadow transition-all duration-500 ${darkMode ? 'bg-[#0d0d0eb6] ' :
+                    <div draggable className={` w-[300px] overflow-y-auto scrollbar2  max-h-[80vh] flex-none   content-shadow transition-all duration-500 ${darkMode ? 'bg-[#0d0d0eb6] ' :
                         'bg-[#d8d8d8a8]'}  ml-2 self-baseline p-2 rounded-lg  flex flex-col `} key={column.id}>
                         {columnId !== column.id ? (
                             <div className='flex justify-between items-center'>
@@ -52,8 +54,8 @@ const Columns = ({addTask , updateTask, deleteTask,  dataTask, dataColumn, board
                                 </div>
                             </form>
                         )}
-                        <div className='flex flex-col pl-1 gap-2 mt-2 '>
-                            <Tasks dataTask={dataTask} updateTask={updateTask} deleteTask={deleteTask} darkMode={darkMode} column={column}/>
+                        <div className='flex flex-col pl-1  mt-1 '>
+                            <Tasks dataTask={dataTask} onDropTask={onDropTask} setActiveTask={setActiveTask} updateTask={updateTask} deleteTask={deleteTask} darkMode={darkMode} column={column}/>
                             <AddNewTaskButton column={column} darkMode={darkMode} addTask={addTask}/>
                         </div>
                     </div>

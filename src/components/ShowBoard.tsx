@@ -18,11 +18,13 @@ interface ShowBoardProps  {
     updateColumn: (id:string, newTitle:string) => void
     updateTask: (id:string, newTitle:string) => void
     deleteTask: (id:string) => void
+    setActiveTask: (aa: number | null) => void 
+    onDropTask: (status:string, position:number) => void
 
 }
 
 
-const ShowBoard = ({dataBoard, dataColumn, addColumn, updateColumn, deleteColumn,  addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
+const ShowBoard = ({dataBoard, dataColumn, addColumn, updateColumn, deleteColumn, setActiveTask,  onDropTask,  addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
     const {slug} = useParams()
     const [board, setBoard] = useState<Board | null>(null)
     const color = board?.bg
@@ -50,7 +52,7 @@ const ShowBoard = ({dataBoard, dataColumn, addColumn, updateColumn, deleteColumn
         </div>
         <div className='flex gap-3 ml-5  overflow-x-auto scrollbar  '>
             <CreateNewColumn board={board} addColumn={addColumn} darkMode={darkMode}/>
-            <Columns board={board} deleteColumn={deleteColumn} updateTask={updateTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
+            <Columns board={board} deleteColumn={deleteColumn} updateTask={updateTask} onDropTask={onDropTask} setActiveTask={setActiveTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
         </div>
     </div>
   )

@@ -10,6 +10,7 @@ const App: React.FC = () => {
   const [dataColumn, setDataColumn] = useState<Column[]>([])
   const [dataTask, setDataTask] = useState<Task[]>([])
   const [darkMode, setDarkMode] = useState(false)
+  const [activeTask, setActiveTask] = useState<number | null>(null)
 
   console.log('board: ' + dataBoard)
   console.log('col: ' + dataColumn)
@@ -84,6 +85,22 @@ const App: React.FC = () => {
     setDataTask(dataTask.map((data) => (data.id === id ? {...data, title:newTitle} : data)))
   }
 
+  const onDropTask = (status:string, position:number) => {
+    console.log(`${activeTask} is going to place into ${status} and at the position ${position}`)
+
+    if (activeTask === null || activeTask === undefined) return;
+    
+    const taskToMove = dataTask[activeTask]
+    const updatedTasks = dataTask.filter((task, index) => index !== activeTask)
+
+    updatedTasks.splice(position, 0, {...taskToMove, 
+        colId: status
+    })
+
+    setDataTask(updatedTasks)
+    
+  }
+
   
  
   return (
@@ -102,7 +119,7 @@ const App: React.FC = () => {
    </div>
     <Routes>
       <Route path='/' element={<Boards updateBoard={updateBoard}  setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-      <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+      <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} onDropTask={onDropTask} setActiveTask={setActiveTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
     </Routes>
       
    </div>
