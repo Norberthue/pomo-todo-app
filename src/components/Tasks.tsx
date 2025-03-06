@@ -48,7 +48,7 @@ const Tasks = ({darkMode , dataTask, deleteTask, updateTask, column , onDropTask
         <DropArea darkMode={darkMode} onDropTask={() => onDropTask(column.id, 0)}></DropArea>
         {dataTask.length >= 1 && dataTask.map((task, index) => (
             task.colId === column.id && (
-                <div  key={task.id}>
+                <div key={task.id}>
                     <div draggable onDragStart={() => setActiveTask(index)} onDragEnd={() => setActiveTask(null)} className={`  ${darkMode ? 'text-[#f8f8f8ee] bg-[#1d2125] hover:bg-[#2e3336] ' : 
                         'text-gray-600 hover:bg-gray-200 bg-white'} 
                         pt-2 pb-2  rounded-lg content-shadow`} key={task.id}>

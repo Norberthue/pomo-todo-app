@@ -11,11 +11,12 @@ const App: React.FC = () => {
   const [dataTask, setDataTask] = useState<Task[]>([])
   const [darkMode, setDarkMode] = useState(false)
   const [activeTask, setActiveTask] = useState<number | null>(null)
+  const [activeCol, setActiveCol] = useState<number | null>(null)
 
   console.log('board: ' + dataBoard)
   console.log('col: ' + dataColumn)
   console.log('task: ' + dataTask.map((task) => task.title))
-
+  
   useEffect(() => {
     const getBoard = localStorage.getItem('board') 
     const getCol = localStorage.getItem('col')
@@ -72,6 +73,20 @@ const App: React.FC = () => {
     setDataColumn(dataColumn.map((data) => (data.id === id ? {...data, title: newTitle} : data)))
   }
 
+  const onDropCol = (position:number) => {
+    
+    if (activeCol === null || activeCol === undefined) return;
+    
+    const colToMove = dataColumn[activeCol]
+    const updatedCols = dataColumn.filter((col, index) => index !== activeCol)
+
+    updatedCols.splice(position, 0, {...colToMove})
+
+
+    setDataColumn(updatedCols)
+    
+  }
+
   //tasks---------------------------------------------------------------
   const addTask = (title: string, columnId: string, boardId: string | null) => {
     setDataTask([...dataTask, {id: uuid(),boardId, colId: columnId, title, description: '', completed: false, timer: 0  }])
@@ -86,7 +101,7 @@ const App: React.FC = () => {
   }
 
   const onDropTask = (status:string, position:number) => {
-    console.log(`${activeTask} is going to place into ${status} and at the position ${position}`)
+    //console.log(`${activeTask} is going to place into ${status} and at the position ${position}`)
 
     if (activeTask === null || activeTask === undefined) return;
     
@@ -101,8 +116,9 @@ const App: React.FC = () => {
     
   }
 
-  
- 
+
+
+
   return (
    <div className={` transition-all duration-300 min-h-screen ${darkMode ? 'text-white bg-[#1d2125]' : 'text-gray-600 bg-[#ffffff85]'}`}>
    <div className='hidden from-red-900 via-red-600 from-green-900 via-green-600 from-blue-900
@@ -119,7 +135,7 @@ const App: React.FC = () => {
    </div>
     <Routes>
       <Route path='/' element={<Boards updateBoard={updateBoard}  setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-      <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} onDropTask={onDropTask} setActiveTask={setActiveTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+      <Route path=':slug' element={<ShowBoard onDropCol={onDropCol} setActiveCol={setActiveCol} deleteColumn={deleteColumn} onDropTask={onDropTask} setActiveTask={setActiveTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
     </Routes>
       
    </div>

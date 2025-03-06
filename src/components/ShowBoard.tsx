@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import CreateNewColumn from './CreateNewColumn';
 import Columns from './Columns';
 import Header from './Header';
+import DropAreaCols from './DropAreaCols';
 
 
 interface ShowBoardProps  {
@@ -20,11 +21,13 @@ interface ShowBoardProps  {
     deleteTask: (id:string) => void
     setActiveTask: (aa: number | null) => void 
     onDropTask: (status:string, position:number) => void
+    setActiveCol: (aa: number | null) => void 
+    onDropCol: (position:number) => void
 
 }
 
 
-const ShowBoard = ({dataBoard, dataColumn, addColumn, updateColumn, deleteColumn, setActiveTask,  onDropTask,  addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
+const ShowBoard = ({dataBoard, dataColumn, setActiveCol, onDropCol, addColumn, updateColumn, deleteColumn, setActiveTask,  onDropTask,  addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
     const {slug} = useParams()
     const [board, setBoard] = useState<Board | null>(null)
     const color = board?.bg
@@ -51,8 +54,9 @@ const ShowBoard = ({dataBoard, dataColumn, addColumn, updateColumn, deleteColumn
         </ul>
         </div>
         <div className='flex gap-3 ml-5  overflow-x-auto scrollbar  '>
+            
             <CreateNewColumn board={board} addColumn={addColumn} darkMode={darkMode}/>
-            <Columns board={board} deleteColumn={deleteColumn} updateTask={updateTask} onDropTask={onDropTask} setActiveTask={setActiveTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
+            <Columns onDropCol={onDropCol} setActiveCol={setActiveCol} board={board} deleteColumn={deleteColumn} updateTask={updateTask} onDropTask={onDropTask} setActiveTask={setActiveTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
         </div>
     </div>
   )
