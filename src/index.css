@@ -69,18 +69,20 @@ html {
   @layer utilities {
     .scrollbar2::-webkit-scrollbar {
       width: 8px; 
+      height: 10px
     }
     .scrollbar2::-webkit-scrollbar-track {
       border-radius: 100vh;
       background: #00000015;
+      margin-block: .2em
     }
   
     .scrollbar2::-webkit-scrollbar-thumb {
-      background: #888888;
+      background: #616161;
       border-radius: 100vh;
     }
   
     .scrollbar2::-webkit-scrollbar-thumb:hover {
-      background: #696969;
+      background: #3a3a3a;
     }
   }
