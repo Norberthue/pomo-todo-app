@@ -13,9 +13,9 @@ const App: React.FC = () => {
   const [activeTask, setActiveTask] = useState<number | null>(null)
   const [activeCol, setActiveCol] = useState<number | null>(null)
 
-  console.log('board: ' + dataBoard)
-  console.log('col: ' + dataColumn)
-  console.log('task: ' + dataTask.map((task) => task.title))
+  // console.log('board: ' + dataBoard)
+  // console.log('col: ' + dataColumn)
+  // console.log('task: ' + dataTask.map((task) => task.title))
   
   useEffect(() => {
     const getBoard = localStorage.getItem('board') 

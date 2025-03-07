@@ -17,7 +17,8 @@ const Tasks = ({darkMode , dataTask, deleteTask, updateTask, column , onDropTask
     const [updatedTaskTitle, setUpdatedTaskTitle] = useState('')
     const [taskId, setTaskId] = useState('')  
     const textareaRef = useRef<HTMLTextAreaElement | null>(null)
- 
+    const [showDrop , setShowDrop] = useState(false) 
+    
     const handleChangeTaskName = (e: React.FormEvent | KeyboardEvent) => {
         e.preventDefault()
         if (updatedTaskTitle.length >= 1) {
@@ -31,7 +32,7 @@ const Tasks = ({darkMode , dataTask, deleteTask, updateTask, column , onDropTask
     const handleUserKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
           // e.preventDefault();
-          handleChangeTaskName(e as unknown as React.FormEvent); // this won't be triggered
+          handleChangeTaskName(e as unknown as React.FormEvent); 
         }
     };
 
@@ -42,14 +43,85 @@ const Tasks = ({darkMode , dataTask, deleteTask, updateTask, column , onDropTask
             textareaRef.current?.setSelectionRange(length, length);
         }
     },[taskId])  
-      
+
+    
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        highlightIndicator(e);
+    };
+
+
+    const clearHighlights = (els: HTMLElement[] = []) => {
+        const indicators = els || getIndicators();
+
+        indicators.forEach((i) => {
+            i.style.opacity = "0";
+        });
+    };
+
+        
+    const highlightIndicator = (e: React.DragEvent) => {
+        const indicators = getIndicators();
+
+        clearHighlights(indicators as HTMLElement[]);
+
+        const el = getNearestIndicator(e, indicators);
+
+        el.element.style.opacity = "1";
+    };
+
+
+    const getNearestIndicator = (e: React.DragEvent, indicators: HTMLElement[]) => {
+        const DISTANCE_OFFSET = 50;
+
+        const el = indicators.reduce(
+            (closest, child) => {
+            const box = child.getBoundingClientRect();
+
+            const offset = e.clientY - (box.top + DISTANCE_OFFSET);
+
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+            },
+            {
+            offset: Number.NEGATIVE_INFINITY,
+            element: indicators[indicators.length - 1],
+            }
+        );
+
+        return el;
+    };
+    
+    
+    const getIndicators = () => {
+        return Array.from(document.querySelectorAll(`[data-column="${column.id}"]`)) as HTMLElement[];
+      };
+
+    const handleDragStart = (e: React.DragEvent<HTMLDivElement>, card: Task) => {
+    e.dataTransfer.setData("cardId", card.id);
+    };
+
+    const handleDragLeave = () => {
+        clearHighlights();
+    };
+
+    const handleDragEnd = () => {
+        clearHighlights();
+        setActiveTask(null)
+    };
     return (
     <>
-        <DropArea darkMode={darkMode} onDropTask={() => onDropTask(column.id, 0)}></DropArea>
+        <DropArea darkMode={darkMode} showDrop={showDrop} beforeId={null} column={column.id}></DropArea>
         {dataTask.length >= 1 && dataTask.map((task, index) => (
             task.colId === column.id && (
                 <div key={task.id}>
-                    <div draggable onDragStart={() => setActiveTask(index)} onDragEnd={() => setActiveTask(null)} className={`  ${darkMode ? 'text-[#f8f8f8ee] bg-[#1d2125] hover:bg-[#2e3336] ' : 
+                    <div draggable onDragOver={e => handleDragOver(e)} onDragEnter={() => setShowDrop(true)}
+                     onDragLeave={() => handleDragLeave()}  onDrop={() => {onDropTask(column.id, index); setShowDrop(false)}} 
+                      onDragStart={(e) => {setActiveTask(index); handleDragStart(e, task) }} onDragEnd={() => handleDragEnd()} 
+                      className={`  ${darkMode ? 'text-[#f8f8f8ee] bg-[#1d2125] hover:bg-[#2e3336] ' : 
                         'text-gray-600 hover:bg-gray-200 bg-white'} 
                         pt-2 pb-2  rounded-lg content-shadow`} key={task.id}>
                             {taskId !== task.id ? (
@@ -72,7 +144,7 @@ const Tasks = ({darkMode , dataTask, deleteTask, updateTask, column , onDropTask
                             )}
                     
                     </div>
-                    <DropArea darkMode={darkMode} onDropTask={() => onDropTask(column.id, index + 1)}></DropArea>
+                    <DropArea darkMode={darkMode} showDrop={showDrop} beforeId={null} column={column.id}></DropArea>
                 </div>
             )
             
