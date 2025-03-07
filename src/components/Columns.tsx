@@ -8,16 +8,17 @@ interface ColumnsForms {
     dataTask: Task[];
     dataColumn: Column[];
     board: Board | null;
-    darkMode: boolean
-    deleteColumn: (id:string) => void
-    updateColumn: (id:string, newTitle:string) => void
-    updateTask: (id:string, newTitle:string) => void
-    deleteTask: (id:string) => void
-    setActiveTask: (aa: number | null) => void 
-    onDropTask: (status:string, position:number) => void
+    darkMode: boolean;
+    deleteColumn: (id:string) => void;
+    updateColumn: (id:string, newTitle:string) => void;
+    updateTask: (id:string, newTitle:string) => void;
+    deleteTask: (id:string) => void;
+    setActiveTask: (aa: number | null) => void ;
+    onDropTask: (status:string, position:number) => void;
+    toggleCompleteTask: (id:string) => void
 }
 
-const Columns = ({addTask , updateTask, deleteTask, setActiveTask,  onDropTask,  dataTask, dataColumn, board, deleteColumn,  updateColumn, darkMode}: ColumnsForms) => {
+const Columns = ({addTask , updateTask, deleteTask, setActiveTask, toggleCompleteTask,  onDropTask,  dataTask, dataColumn, board, deleteColumn,  updateColumn, darkMode}: ColumnsForms) => {
     const [updatedColumnTitle, setUpdatedColumnTitle] = useState('')
     const [columnId, setColumnId] = useState('') 
    
@@ -34,7 +35,7 @@ const Columns = ({addTask , updateTask, deleteTask, setActiveTask,  onDropTask, 
         <>
             {dataColumn.length >= 1 && dataColumn.map((column) => (
                 column.boardId === board?.id && (
-                    <div draggable className={` w-[300px] relative  mb-2  max-h-[75vh] flex-none  transition-all duration-500 ${darkMode ? 'bg-[#0d0d0eb6] ' :
+                    <div draggable className={` w-[300px] relative  mb-2  max-h-[75vh] flex-none  transition-all duration-500 ${darkMode ? 'bg-[#0d0d0ea2] ' :
                         'bg-[#d8d8d8a8]'}  ml-2 self-baseline rounded-lg  flex flex-col `} key={column.id}>
                         {columnId !== column.id ? (
                             <div className='flex justify-between pl-2 pr-2 pb-2 pt-2 items-center sticky top-0 z-10  '>
@@ -55,7 +56,7 @@ const Columns = ({addTask , updateTask, deleteTask, setActiveTask,  onDropTask, 
                             </form>
                         )}
                         <div className='flex flex-col pl-2 pr-2 mt-1 overflow-y-auto scrollbar2'>
-                            <Tasks dataTask={dataTask} onDropTask={onDropTask} setActiveTask={setActiveTask} updateTask={updateTask} deleteTask={deleteTask} darkMode={darkMode} column={column}/>
+                            <Tasks dataTask={dataTask} toggleCompleteTask={toggleCompleteTask} onDropTask={onDropTask} setActiveTask={setActiveTask} updateTask={updateTask} deleteTask={deleteTask} darkMode={darkMode} column={column}/>
                             
                         </div>
                         <AddNewTaskButton column={column} darkMode={darkMode} addTask={addTask}/>

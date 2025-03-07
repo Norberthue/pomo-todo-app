@@ -86,6 +86,10 @@ const App: React.FC = () => {
     setDataTask(dataTask.map((data) => (data.id === id ? {...data, title:newTitle} : data)))
   }
 
+  const toggleCompleteTask = (id:string) => {
+    setDataTask(dataTask.map((data) => (data.id === id ? {...data, completed: !data.completed} : data)) )
+  }
+
   const onDropTask = (status:string, position:number) => {
     console.log(`${activeTask} is going to place into ${status} and at the position ${position}`)
 
@@ -120,7 +124,7 @@ const App: React.FC = () => {
    </div>
     <Routes>
       <Route path='/' element={<Boards updateBoard={updateBoard}  setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-      <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} onDropTask={onDropTask} setActiveTask={setActiveTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+      <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} toggleCompleteTask={toggleCompleteTask} onDropTask={onDropTask} setActiveTask={setActiveTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
     </Routes>
       
    </div>

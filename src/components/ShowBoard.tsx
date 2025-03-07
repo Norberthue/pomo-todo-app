@@ -20,11 +20,12 @@ interface ShowBoardProps  {
     deleteTask: (id:string) => void
     setActiveTask: (aa: number | null) => void 
     onDropTask: (status:string, position:number) => void
+    toggleCompleteTask: (id:string) => void
 
 }
 
 
-const ShowBoard = ({dataBoard, dataColumn, addColumn, updateColumn, deleteColumn, setActiveTask,  onDropTask,  addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
+const ShowBoard = ({dataBoard, dataColumn, addColumn, toggleCompleteTask, updateColumn, deleteColumn, setActiveTask,  onDropTask,  addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
     const {slug} = useParams()
     const [board, setBoard] = useState<Board | null>(null)
     const color = board?.bg
@@ -39,20 +40,18 @@ const ShowBoard = ({dataBoard, dataColumn, addColumn, updateColumn, deleteColumn
     },[slug])
 
     
-
-    
     return (
     <div className={`flex flex-col min-h-screen gap-5  transition-colors duration-500 bg-gradient-to-b  ${darkMode ? `from-20% from-${color}-900   via-${color}-800   to-${color}-500`
     : `  from-20% from-${color}-500   via-${color}-400    to-${color}-300`}  `}> 
        <Header darkMode={darkMode} setDarkMode={setDarkMode}></Header>
         <div className=' flex gap-5 mt-5 ml-8 text-xl items-center text-white'>
-        <ul className='list-disc ml-5'>
+        <ul className='list-disc   ml-5'>
             <li className="text-white font-semibold ">{board?.title}</li>
         </ul>
         </div>
         <div className='flex gap-3 ml-5  overflow-x-auto scrollbar  '>
             <CreateNewColumn board={board} addColumn={addColumn} darkMode={darkMode}/>
-            <Columns board={board} deleteColumn={deleteColumn} updateTask={updateTask} onDropTask={onDropTask} setActiveTask={setActiveTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
+            <Columns board={board} deleteColumn={deleteColumn} updateTask={updateTask} toggleCompleteTask={toggleCompleteTask} onDropTask={onDropTask} setActiveTask={setActiveTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
         </div>
     </div>
   )
