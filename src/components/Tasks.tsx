@@ -45,76 +45,10 @@ const Tasks = ({darkMode , dataTask, deleteTask, updateTask, column , onDropTask
     },[taskId])  
 
     
-    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        highlightIndicator(e);
-    };
-
-
-    const clearHighlights = (els: HTMLElement[] = []) => {
-        const indicators = els || getIndicators();
-
-        indicators.forEach((i) => {
-            i.style.opacity = "0";
-        });
-    };
-
-        
-    const highlightIndicator = (e: React.DragEvent) => {
-        const indicators = getIndicators();
-
-        clearHighlights(indicators as HTMLElement[]);
-
-        const el = getNearestIndicator(e, indicators);
-
-        el.element.style.opacity = "1";
-    };
-
-
-    const getNearestIndicator = (e: React.DragEvent, indicators: HTMLElement[]) => {
-        const DISTANCE_OFFSET = 50;
-
-        const el = indicators.reduce(
-            (closest, child) => {
-            const box = child.getBoundingClientRect();
-
-            const offset = e.clientY - (box.top + DISTANCE_OFFSET);
-
-            if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
-            }
-            },
-            {
-            offset: Number.NEGATIVE_INFINITY,
-            element: indicators[indicators.length - 1],
-            }
-        );
-
-        return el;
-    };
     
-    
-    const getIndicators = () => {
-        return Array.from(document.querySelectorAll(`[data-column="${column.id}"]`)) as HTMLElement[];
-      };
-
-    const handleDragStart = (e: React.DragEvent<HTMLDivElement>, card: Task) => {
-    e.dataTransfer.setData("cardId", card.id);
-    };
-
-    const handleDragLeave = () => {
-        clearHighlights();
-    };
-
-    const handleDragEnd = () => {
-        clearHighlights();
-        setActiveTask(null)
-    };
     return (
     <>
-        <DropArea darkMode={darkMode} showDrop={showDrop} beforeId={null} column={column.id}></DropArea>
+        <DropArea darkMode={darkMode} onDropTask={() => onDropTask(column.id, 0)}></DropArea>
         {dataTask.length >= 1 && dataTask.map((task, index) => (
             task.colId === column.id && (
                 <div key={task.id}>
@@ -141,7 +75,7 @@ const Tasks = ({darkMode , dataTask, deleteTask, updateTask, column , onDropTask
                             )}
                     
                     </div>
-                    <DropArea darkMode={darkMode} showDrop={showDrop} beforeId={null} column={column.id}></DropArea>
+                    <DropArea darkMode={darkMode} onDropTask={() => onDropTask(column.id, index)}></DropArea>
                 </div>
             )
             
