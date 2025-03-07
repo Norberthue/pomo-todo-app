@@ -118,10 +118,7 @@ const Tasks = ({darkMode , dataTask, deleteTask, updateTask, column , onDropTask
         {dataTask.length >= 1 && dataTask.map((task, index) => (
             task.colId === column.id && (
                 <div key={task.id}>
-                    <div draggable onDragOver={e => handleDragOver(e)} onDragEnter={() => setShowDrop(true)}
-                     onDragLeave={() => handleDragLeave()}  onDrop={() => {onDropTask(column.id, index); setShowDrop(false)}} 
-                      onDragStart={(e) => {setActiveTask(index); handleDragStart(e, task) }} onDragEnd={() => handleDragEnd()} 
-                      className={`  ${darkMode ? 'text-[#f8f8f8ee] bg-[#1d2125] hover:bg-[#2e3336] ' : 
+                    <div draggable onDragStart={() => setActiveTask(index)} onDragEnd={() => setActiveTask(null)} className={`  ${darkMode ? 'text-[#f8f8f8ee] bg-[#1d2125] hover:bg-[#2e3336] ' : 
                         'text-gray-600 hover:bg-gray-200 bg-white'} 
                         pt-2 pb-2  rounded-lg content-shadow`} key={task.id}>
                             {taskId !== task.id ? (
