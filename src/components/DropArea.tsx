@@ -1,17 +1,17 @@
-import { useState } from "react"
 
 interface dropAreaForms {
-    onDropTask: (status:string, position:number) => void;
+    beforeId: string | null;
     darkMode: boolean;
+    column: string;
 }   
 
-const DropArea = ({  onDropTask , darkMode}:dropAreaForms) => {
-    const [showDrop , setShowDrop] = useState(false) 
+const DropArea = ({ beforeId , column, darkMode}:dropAreaForms) => {
     return (
-        <div onDrop={() => {onDropTask('dropped', 0) , setShowDrop(false)}} onDragOver={e => e.preventDefault()} onDragEnter={() => setShowDrop(true)} onDragLeave={() => setShowDrop(false)}  
-        className={` ${showDrop ? `opacity-100 ${darkMode ? 'bg-[#1d212598]' : 'bg-[#c3c7ca8a]'} w-full h-[40px] pl-2 mt-2 mb-2 rounded-sm pt-2 pb-2 transition-all` : 'opacity-0 w-full bg-red-300 h-[20px] pl-2 mt-0.5 mb-0.5 rounded-sm pt-2 pb-2 transition-all'}`}>
-            
-        </div>
+        <div
+        data-before={beforeId || "-1"}
+        data-column={column}
+        className={`my-0.5 h-0.5 w-full z-20 opacity-0 ${darkMode ? 'bg-[#676768]' : 'bg-[#676768]'}`}
+    />
   )
 }
 

@@ -18,17 +18,15 @@ interface ShowBoardProps  {
     updateColumn: (id:string, newTitle:string) => void
     updateTask: (id:string, newTitle:string) => void
     deleteTask: (id:string) => void
-    setActiveTask: (aa: number | null) => void 
-    onDropTask: (status:string, position:number) => void
     toggleCompleteTask: (id:string) => void
+    setDataTask:(set: Task[]) => void
 
 }
 
-
-const ShowBoard = ({dataBoard, dataColumn, addColumn, toggleCompleteTask, updateColumn, deleteColumn, setActiveTask,  onDropTask,  addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
+const ShowBoard = ({dataBoard, dataColumn, setDataTask, addColumn, toggleCompleteTask, updateColumn, deleteColumn, addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
     const {slug} = useParams()
     const [board, setBoard] = useState<Board | null>(null)
-    const color = board?.bg
+    const color = board?.bg 
    
     useEffect(()=> {
         const findDetail = dataBoard.filter((board) => board.id === slug)
@@ -51,7 +49,7 @@ const ShowBoard = ({dataBoard, dataColumn, addColumn, toggleCompleteTask, update
         </div>
         <div className='flex gap-3 ml-5  overflow-x-auto scrollbar  '>
             <CreateNewColumn board={board} addColumn={addColumn} darkMode={darkMode}/>
-            <Columns board={board} deleteColumn={deleteColumn} updateTask={updateTask} toggleCompleteTask={toggleCompleteTask} onDropTask={onDropTask} setActiveTask={setActiveTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
+            <Columns setDataTask={setDataTask}  board={board} deleteColumn={deleteColumn} updateTask={updateTask} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
         </div>
     </div>
   )

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Column, Task } from '../Types'
 import DropArea from './DropArea';
+import { motion } from "framer-motion";
 
 interface TasksForms {
     dataTask: Task[];
@@ -8,17 +9,15 @@ interface TasksForms {
     column: Column;
     updateTask: (id:string, newTitle:string) => void;
     deleteTask: (id:string) => void;
-    onDropTask: (status:string, position:number) => void;
-    setActiveTask: (aa: number | null) => void;
     toggleCompleteTask: (id:string) => void;
+    
     
 }
 
-const Tasks = ({darkMode , dataTask, deleteTask, updateTask, toggleCompleteTask, column , onDropTask, setActiveTask}: TasksForms) => {
+const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, toggleCompleteTask, column }: TasksForms) => {
     const [updatedTaskTitle, setUpdatedTaskTitle] = useState('')
     const [taskId, setTaskId] = useState('')  
     const textareaRef = useRef<HTMLTextAreaElement | null>(null)
-    const [showDrop , setShowDrop] = useState(false) 
     
     const handleChangeTaskName = (e: React.FormEvent | KeyboardEvent) => {
         e.preventDefault()
@@ -45,25 +44,29 @@ const Tasks = ({darkMode , dataTask, deleteTask, updateTask, toggleCompleteTask,
         }
     },[taskId])  
 
-    
+
+    const handleDragStart = (e:any, card: Task) => {
+        e.dataTransfer.setData("cardId", card.id);
+      };
     
     return (
-    <>
-        <DropArea darkMode={darkMode} onDropTask={() => onDropTask(column.id, 0)}></DropArea>
-        {dataTask.length >= 1 && dataTask.map((task, index) => (
+    <div >
+        {dataTask.length >= 1 && dataTask.map((task) => (
             task.colId === column.id && (
                 <div key={task.id}>
-                    <div draggable onDragStart={() => setActiveTask(index)} onDragEnd={() => setActiveTask(null)} className={`group  ${darkMode ? 'text-[#f8f8f8ee] bg-[#1d2125] hover:bg-[#2e3336] ' : 
+                    <DropArea darkMode={darkMode} beforeId={task.id} column={column.id}></DropArea>
+                    <motion.div  layout='preserve-aspect' layoutId={task.id} 
+                      draggable onDragStart={(e) => handleDragStart(e, task)} className={`group  ${darkMode ? 'text-[#f8f8f8ee] bg-[#1d2125] hover:bg-[#2e3336] ' : 
                         'text-gray-600  hover:bg-gray-200 bg-white'} 
                         pt-2 pb-2  rounded-lg content-shadow`} key={task.id}>
                             {taskId !== task.id ? (
-                                <div className='flex justify-between items-center '>
+                                <div className='flex justify-between items-center relative'>
                                     <div className='flex items-center relative'>
                                         <i onClick={() => toggleCompleteTask(task.id)} className={` ${task.completed ? ' cursor-pointer fa-circle-check fa-solid text-green-600' : 'fa-circle fa-regular'} absolute top-1 opacity-0 group-hover:opacity-100 left-0 group-hover:left-2 duration-500`}></i> 
                                         <div className={`${task.completed ? 'text-gray-400 line-through' : ''} pt-1 pl-2 group-hover:pl-7 group-hover:overflow-hidden break-words font-semibold max-w-[230px] text-sm duration-500`}>{task.title}</div>
                                     </div>
                                     
-                                    <div className='flex gap-2 opacity-0  group-hover:right-2 absolute right-0 group-hover:opacity-100 duration-500 pr-2'>
+                                    <div className='flex gap-2 opacity-0  group-hover:right-1 absolute right-0 group-hover:opacity-100 duration-500 pr-2'>
                                         <button className='hover:scale-90 duration-200 cursor-pointer text-sm' onClick={() => {deleteTask(task.id)}}><i className="fa-solid fa-trash"></i></button>
                                         <button className='hover:scale-90 duration-200 cursor-pointer text-sm' onClick={() => {setTaskId(task.id), setUpdatedTaskTitle(task.title)}}><i className="fa-solid fa-pen-to-square"></i></button>
                                     </div>
@@ -79,13 +82,13 @@ const Tasks = ({darkMode , dataTask, deleteTask, updateTask, toggleCompleteTask,
                                 </form>
                             )}
                     
-                    </div>
-                    <DropArea darkMode={darkMode} onDropTask={() => onDropTask(column.id, index)}></DropArea>
+                    </motion.div>
+                   
                 </div>
             )
             
         ))}
-    </>
+    </div>
   )
 }
 
