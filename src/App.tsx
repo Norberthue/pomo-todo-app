@@ -92,11 +92,6 @@ const App: React.FC = () => {
 
   
 
-
-  
-
-  
- 
   return (
    <div className={` transition-all duration-300 min-h-screen ${darkMode ? 'text-white bg-[#1d2125]' : 'text-gray-600 bg-[#ffffff85]'}`}>
    <div className='hidden from-red-900 via-red-600 from-green-900 via-green-600 from-blue-900

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Column, Task } from '../Types'
 import DropArea from './DropArea';
 import { motion } from "framer-motion";
+import ModalTasks from './ModalTasks';
 
 interface TasksForms {
     dataTask: Task[];
@@ -18,6 +19,8 @@ const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, toggleCompleteTask
     const [updatedTaskTitle, setUpdatedTaskTitle] = useState('')
     const [taskId, setTaskId] = useState('')  
     const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+    const [openTask, setOpenTask] = useState<Task | null>(null)
+    const [isTaskOpen, setIsTaskOpen] = useState(false)
     
     const handleChangeTaskName = (e: React.FormEvent | KeyboardEvent) => {
         e.preventDefault()
@@ -44,13 +47,20 @@ const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, toggleCompleteTask
         }
     },[taskId])  
 
-
+    //start drag for task
     const handleDragStart = (e:any, card: Task) => {
         e.dataTransfer.setData("cardId", card.id);
       };
+
+
+    const isClickedOpenTask =(task:Task) => {
+        setIsTaskOpen(true)
+        setOpenTask(task)
+    }
+    
     
     return (
-    <div >
+    <div>
         {dataTask.length >= 1 && dataTask.map((task) => (
             task.colId === column.id && (
                 <div key={task.id}>
@@ -62,8 +72,13 @@ const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, toggleCompleteTask
                             {taskId !== task.id ? (
                                 <div className='flex justify-between items-center relative'>
                                     <div className='flex items-center relative'>
-                                        <i onClick={() => toggleCompleteTask(task.id)} className={` ${task.completed ? ' cursor-pointer fa-circle-check fa-solid text-green-600' : 'fa-circle fa-regular'} absolute top-1 opacity-0 group-hover:opacity-100 left-0 group-hover:left-2 duration-500`}></i> 
-                                        <div className={`${task.completed ? 'text-gray-400 line-through' : ''} pt-1 pl-2 group-hover:pl-7 group-hover:overflow-hidden break-words font-semibold max-w-[230px] text-sm duration-500`}>{task.title}</div>
+                                        <i onClick={() => toggleCompleteTask(task.id)} className={` ${task.completed ? ' cursor-pointer fa-circle-check fa-solid text-green-600' : ' cursor-pointer fa-circle fa-regular'}
+                                         absolute top-1 opacity-0 group-hover:opacity-100 left-0 group-hover:left-2 duration-500`}></i> 
+                                        <div onClick={() => isClickedOpenTask(task)} className={`${task.completed ? 'text-gray-400 line-through' : ''}  
+                                        hover:font-extrabold cursor-pointer pt-1 pl-2 group-hover:pl-7 
+                                        group-hover:overflow-hidden break-words font-semibold max-w-[230px] text-sm duration-500`}>
+                                            {task.title}
+                                        </div>
                                     </div>
                                     
                                     <div className='flex gap-2 opacity-0  group-hover:right-1 absolute right-0 group-hover:opacity-100 duration-500 pr-2'>
@@ -81,13 +96,14 @@ const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, toggleCompleteTask
                                     </div>
                                 </form>
                             )}
-                    
+
                     </motion.div>
-                   
+                    
                 </div>
             )
             
         ))}
+        {isTaskOpen && openTask && <ModalTasks task={openTask} setIsTaskOpen={setIsTaskOpen} setOpenTask={setOpenTask}></ModalTasks>}
     </div>
   )
 }
