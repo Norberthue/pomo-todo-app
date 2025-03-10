@@ -90,8 +90,12 @@ const App: React.FC = () => {
     setDataTask(dataTask.map((data) => (data.id === id ? {...data, completed: !data.completed} : data)) )
   }
 
-  
+  const updateTaskDescription = (id:string, newDescription:string) => {
+    setDataTask(dataTask.map((data) => (data.id === id ? {...data, description:newDescription} : data)))
+  }
 
+  
+  
   return (
    <div className={` transition-all duration-300 min-h-screen ${darkMode ? 'text-white bg-[#1d2125]' : 'text-gray-600 bg-[#ffffff85]'}`}>
    <div className='hidden from-red-900 via-red-600 from-green-900 via-green-600 from-blue-900
@@ -106,11 +110,10 @@ const App: React.FC = () => {
     '>
 
    </div>
-    <Routes>
-      <Route path='/' element={<Boards updateBoard={updateBoard}  setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-      <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
-    </Routes>
-      
+      <Routes>
+        <Route path='/' element={<Boards updateBoard={updateBoard}  setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
+        <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+      </Routes>
    </div>
   )
 }

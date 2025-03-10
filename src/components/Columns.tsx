@@ -17,11 +17,12 @@ interface ColumnsForms {
     deleteTask: (id:string) => void;
     toggleCompleteTask: (id:string) => void;
     setDataTask:(set: Task[]) => void;
+    updateTaskDescription:(id:string, newDescription:string) => void;
     
    
 }
 
-const Columns = ({addTask , updateTask, deleteTask, setDataTask, toggleCompleteTask, dataTask, dataColumn, board, deleteColumn,  updateColumn, darkMode}: ColumnsForms) => {
+const Columns = ({addTask , updateTask, deleteTask, setDataTask, updateTaskDescription, toggleCompleteTask, dataTask, dataColumn, board, deleteColumn,  updateColumn, darkMode}: ColumnsForms) => {
     const [updatedColumnTitle, setUpdatedColumnTitle] = useState('')
     const [columnId, setColumnId] = useState('') 
     
@@ -158,7 +159,7 @@ const Columns = ({addTask , updateTask, deleteTask, setDataTask, toggleCompleteT
                             <div onDrop={(e) => handleDragEnd(e,column.id)}
                                 onDragOver={(e) => handleDragOver(e,column.id)}
                                 onDragLeave={() => handleDragLeave(column.id)} className='flex flex-col mt-1 pl-2 pr-2 overflow-y-auto scrollbar2'>
-                                <Tasks dataTask={dataTask} toggleCompleteTask={toggleCompleteTask} updateTask={updateTask} deleteTask={deleteTask} darkMode={darkMode} column={column}/>
+                                <Tasks updateTaskDescription={updateTaskDescription} dataTask={dataTask} toggleCompleteTask={toggleCompleteTask} updateTask={updateTask} deleteTask={deleteTask} darkMode={darkMode} column={column}/>
                                 <DropArea darkMode={darkMode} beforeId={null} column={column.id}></DropArea>
                                 <AddNewTaskButton column={column}  darkMode={darkMode} addTask={addTask}/>
                                 

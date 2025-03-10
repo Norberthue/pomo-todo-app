@@ -11,15 +11,15 @@ interface TasksForms {
     updateTask: (id:string, newTitle:string) => void;
     deleteTask: (id:string) => void;
     toggleCompleteTask: (id:string) => void;
+    updateTaskDescription:(id:string, newDescription:string) => void;
     
     
 }
 
-const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, toggleCompleteTask, column }: TasksForms) => {
+const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, updateTaskDescription, toggleCompleteTask, column }: TasksForms) => {
     const [updatedTaskTitle, setUpdatedTaskTitle] = useState('')
     const [taskId, setTaskId] = useState('')  
     const textareaRef = useRef<HTMLTextAreaElement | null>(null)
-    const [openTask, setOpenTask] = useState<Task | null>(null)
     const [isTaskOpen, setIsTaskOpen] = useState(false)
     
     const handleChangeTaskName = (e: React.FormEvent | KeyboardEvent) => {
@@ -53,12 +53,6 @@ const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, toggleCompleteTask
       };
 
 
-    const isClickedOpenTask =(task:Task) => {
-        setIsTaskOpen(true)
-        setOpenTask(task)
-    }
-    
-    
     return (
     <div>
         {dataTask.length >= 1 && dataTask.map((task) => (
@@ -74,7 +68,7 @@ const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, toggleCompleteTask
                                     <div className='flex items-center relative'>
                                         <i onClick={() => toggleCompleteTask(task.id)} className={` ${task.completed ? ' cursor-pointer fa-circle-check fa-solid text-green-600' : ' cursor-pointer fa-circle fa-regular'}
                                          absolute top-1 opacity-0 group-hover:opacity-100 left-0 group-hover:left-2 duration-500`}></i> 
-                                        <div onClick={() => isClickedOpenTask(task)} className={`${task.completed ? 'text-gray-400 line-through' : ''}  
+                                        <div onClick={() => setIsTaskOpen(true)} className={`${task.completed ? 'text-gray-400 line-through' : ''}  
                                         hover:font-extrabold cursor-pointer pt-1 pl-2 group-hover:pl-7 
                                         group-hover:overflow-hidden break-words font-semibold max-w-[230px] text-sm duration-500`}>
                                             {task.title}
@@ -89,21 +83,20 @@ const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, toggleCompleteTask
                                 ) : ( 
                                 <form onSubmit={(e) => {handleChangeTaskName(e)}} className=" items-center justify-between flex gap-1 text-sm">
                                     <textarea  onKeyDown={handleUserKeyPress} ref={textareaRef} maxLength={80}  value={updatedTaskTitle} onChange={(e) => {setUpdatedTaskTitle(e.target.value)}} autoFocus className={`  ml-1  border-2 border-[#5a626957]
-                                    duration-100 rounded-sm pl-2 pr-2 outline-none  field-sizing-content max-w-[200px] `}/>
+                                    duration-100 rounded-sm pl-2 pr-2 outline-none  field-sizing-content min-w-[200px] max-w-[200px] `}/>
                                     <div className="flex items-center  gap-1 text-white mr-2">
                                         <button type='submit' className="hover:bg-slate-600 rounded-sm duration-200   pl-2 pr-2"><i className="fa-solid fa-check"></i></button>
                                         <button className="hover:bg-slate-600 rounded-sm duration-200  pl-2 pr-2" onClick={() => {setTaskId('')}}><i className="fa-solid fa-xmark"></i></button>
                                     </div>
                                 </form>
                             )}
-
                     </motion.div>
-                    
+                    {isTaskOpen && <ModalTasks updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode} task={task} setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
                 </div>
             )
             
         ))}
-        {isTaskOpen && openTask && <ModalTasks task={openTask} setIsTaskOpen={setIsTaskOpen} setOpenTask={setOpenTask}></ModalTasks>}
+        
     </div>
   )
 }
