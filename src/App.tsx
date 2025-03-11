@@ -10,8 +10,6 @@ const App: React.FC = () => {
   const [dataColumn, setDataColumn] = useState<Column[]>([])
   const [dataTask, setDataTask] = useState<Task[]>([])
   const [darkMode, setDarkMode] = useState(false)
-  
-
 
   // console.log('board: ' + dataBoard)
   // console.log('col: ' + dataColumn)
@@ -75,7 +73,7 @@ const App: React.FC = () => {
 
   //tasks---------------------------------------------------------------
   const addTask = (title: string, columnId: string, boardId: string | null) => {
-    setDataTask([...dataTask, {id: uuid(),boardId, colId: columnId, title, description: '', completed: false, timer: 0  }])
+    setDataTask([...dataTask, {id: uuid(),boardId, colId: columnId, title, description: '', completed: false, minutes: 25, seconds: 0, isOn: false}])
   }
 
   const deleteTask = (id:string) => {
@@ -92,6 +90,10 @@ const App: React.FC = () => {
 
   const updateTaskDescription = (id:string, newDescription:string) => {
     setDataTask(dataTask.map((data) => (data.id === id ? {...data, description:newDescription} : data)))
+  }
+
+  const updateTaskTimer = (id:string, newMinutes:number, newSeconds:number) => {
+    setDataTask(dataTask.map((data) => (data.id === id ? {...data, minutes:newMinutes, seconds:newSeconds} : data)))
   }
 
   
@@ -112,7 +114,7 @@ const App: React.FC = () => {
    </div>
       <Routes>
         <Route path='/' element={<Boards updateBoard={updateBoard}  setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-        <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+        <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
       </Routes>
    </div>
   )

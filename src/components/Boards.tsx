@@ -93,7 +93,6 @@ const Boards = ({ addBoard, dataBoard, darkMode, deleteBoard, setDarkMode, updat
                           </div>
                         </form>
                     )}
-                    
                     <div className="opacity-0  group-hover:opacity-100 group-hover:right-2 absolute  bottom-1 flex right-0 gap-2 items-center duration-500">
                       <button onClick={() => {deleteBoard(data.id)}} className="hover:scale-90 duration-200 cursor-pointer"><i className="fa-solid fa-trash"></i></button>
                       <button onClick={() => {setUpdatedBoardTitle(data.title),setTemplateId(data.id)}} className="hover:scale-90 duration-200 cursor-pointer"><i className="fa-solid fa-pen-to-square"></i></button>

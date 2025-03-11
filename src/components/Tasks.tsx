@@ -12,11 +12,11 @@ interface TasksForms {
     deleteTask: (id:string) => void;
     toggleCompleteTask: (id:string) => void;
     updateTaskDescription:(id:string, newDescription:string) => void;
-    
+    updateTaskTimer:(id:string, minutes:number, seconds:number) => void;
     
 }
 
-const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, updateTaskDescription, toggleCompleteTask, column }: TasksForms) => {
+const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
     const [updatedTaskTitle, setUpdatedTaskTitle] = useState('')
     const [taskId, setTaskId] = useState('')  
     const textareaRef = useRef<HTMLTextAreaElement | null>(null)
@@ -91,7 +91,7 @@ const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, updateTaskDescript
                                 </form>
                             )}
                     </motion.div>
-                    {isTaskOpen && <ModalTasks updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode} task={task} setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
+                    {isTaskOpen && <ModalTasks updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode} task={task} setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
                 </div>
             )
             

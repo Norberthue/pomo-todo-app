@@ -18,6 +18,8 @@ export interface Task {
     title: string;
     description: string;
     completed: boolean;
-    timer: number;
+    minutes: number;
+    seconds: number;
+    isOn: boolean;
 }
 
