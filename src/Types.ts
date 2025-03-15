@@ -18,6 +18,13 @@ export interface Task {
     title: string;
     description: string;
     completed: boolean;
+}
+
+export interface Timer {
+    id:string
+    boardId:string;
+    colId: string;
+    taskId: string;
     minutes: number;
     seconds: number;
     isOn: boolean;

@@ -1,22 +1,31 @@
-import { useEffect, useRef, useState } from "react";
-import { Task } from "../Types"
+
+import { Task, Timer } from "../Types"
 import Notes from "./Notes";
-import Timer from "./Timer";
+import TaskTimer from "./TaskTimer";
+
 
 interface ModalTaskForms {
-    task: Task;
+    dataTask: Task[];
     setIsTaskOpen: (open:boolean) => void;
     darkMode: boolean;
     updateTaskDescription:(id:string, newDescription:string) => void;
     toggleCompleteTask: (id:string) => void;
     updateTaskTimer:(id:string, minutes:number, seconds:number) => void;
+    getTask: string;
+    dataTimer: Timer[];
+    pauseStartTaskTimer: (id:string) => void;
 }
 
-const ModalTasks = ({task, updateTaskTimer, toggleCompleteTask, updateTaskDescription, setIsTaskOpen , darkMode}: ModalTaskForms) => {
+const ModalTasks = ({updateTaskTimer, getTask, dataTimer, pauseStartTaskTimer, dataTask, toggleCompleteTask, updateTaskDescription, setIsTaskOpen , darkMode}: ModalTaskForms) => {
+    
+    const findTask = dataTask.filter((task) => task.id === getTask)
+
+    const task = findTask[0]
+    
     return (
     <div onClick={() => {setIsTaskOpen(false)}} className={` fixed z-20 top-0 left-0 w-screen h-full bg-[#00000086]`}>
         <div onClick={e => {e.stopPropagation()}} className={`fixed top-1/2 left-1/2 -translate-x-1/2  -translate-y-1/2
-             ${darkMode ? 'bg-[#242222]' : 'bg-[#e4e4e4]'} max-w-[500px] w-full h-[600px] rounded-lg p-4  flex flex-col gap-4`}>
+             ${darkMode ? 'bg-[#242222]' : 'bg-[#e4e4e4]'} max-w-[500px] w-full min-h-[600px] rounded-lg p-4  flex flex-col gap-4`}>
                 <div className="flex items-center gap-2 justify-between">
                     <div className="flex items-center gap-2">
                         <i onClick={() => toggleCompleteTask(task.id)} className={` ${task.completed ? ' cursor-pointer fa-circle-check fa-solid text-green-600' : ' cursor-pointer fa-circle fa-regular'} duration-500`}></i> 
@@ -38,7 +47,7 @@ const ModalTasks = ({task, updateTaskTimer, toggleCompleteTask, updateTaskDescri
                     <h1 className="text-lg">Timer</h1>
                 </div>
                 <div className="flex items-center justify-center">
-                    <Timer updateTaskTimer={updateTaskTimer} task={task}></Timer>
+                    <TaskTimer pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} darkMode={darkMode} updateTaskTimer={updateTaskTimer} task={task}></TaskTimer>
                 </div>
         </div>
     </div>

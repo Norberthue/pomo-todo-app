@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Column, Task } from '../Types'
+import { Column, Task, Timer } from '../Types'
 import DropArea from './DropArea';
 import { motion } from "framer-motion";
 import ModalTasks from './ModalTasks';
@@ -13,14 +13,16 @@ interface TasksForms {
     toggleCompleteTask: (id:string) => void;
     updateTaskDescription:(id:string, newDescription:string) => void;
     updateTaskTimer:(id:string, minutes:number, seconds:number) => void;
-    
+    dataTimer: Timer[];
+    pauseStartTaskTimer: (id:string) => void;
 }
 
-const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
+const Tasks = ({darkMode, dataTask, dataTimer, deleteTask, pauseStartTaskTimer, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
     const [updatedTaskTitle, setUpdatedTaskTitle] = useState('')
     const [taskId, setTaskId] = useState('')  
     const textareaRef = useRef<HTMLTextAreaElement | null>(null)
     const [isTaskOpen, setIsTaskOpen] = useState(false)
+    const [getTask, setGetTask] = useState<string>('')
     
     const handleChangeTaskName = (e: React.FormEvent | KeyboardEvent) => {
         e.preventDefault()
@@ -68,7 +70,7 @@ const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, updateTaskDescript
                                     <div className='flex items-center relative'>
                                         <i onClick={() => toggleCompleteTask(task.id)} className={` ${task.completed ? ' cursor-pointer fa-circle-check fa-solid text-green-600' : ' cursor-pointer fa-circle fa-regular'}
                                          absolute top-1 opacity-0 group-hover:opacity-100 left-0 group-hover:left-2 duration-500`}></i> 
-                                        <div onClick={() => setIsTaskOpen(true)} className={`${task.completed ? 'text-gray-400 line-through' : ''}  
+                                        <div onClick={() => {setIsTaskOpen(true), setGetTask(task.id)}} className={`${task.completed ? 'text-gray-400 line-through' : ''}  
                                         hover:font-extrabold cursor-pointer pt-1 pl-2 group-hover:pl-7 
                                         group-hover:overflow-hidden break-words font-semibold max-w-[230px] text-sm duration-500`}>
                                             {task.title}
@@ -91,7 +93,7 @@ const Tasks = ({darkMode , dataTask,  deleteTask, updateTask, updateTaskDescript
                                 </form>
                             )}
                     </motion.div>
-                    {isTaskOpen && <ModalTasks updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode} task={task} setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
+                    {isTaskOpen && <ModalTasks pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} dataTask={dataTask} getTask={getTask} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode}  setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
                 </div>
             )
             

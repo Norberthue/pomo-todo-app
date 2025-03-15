@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Boards from './components/Boards'
-import  { Board, Column, Task } from  './Types'
+import  { Board, Column, Task, Timer } from  './Types'
 import { Routes, Route } from 'react-router-dom'
 import ShowBoard from './components/ShowBoard'
 import { v4 as uuid } from 'uuid'
@@ -9,21 +9,27 @@ const App: React.FC = () => {
   const [dataBoard, setDataBoard] = useState<Board[]>([])
   const [dataColumn, setDataColumn] = useState<Column[]>([])
   const [dataTask, setDataTask] = useState<Task[]>([])
+  const [dataTimer, setDataTimer] = useState<Timer[]>([])
   const [darkMode, setDarkMode] = useState(false)
-
+  
+  
   // console.log('board: ' + dataBoard)
   // console.log('col: ' + dataColumn)
-  // console.log('task: ' + dataTask.map((task) => task.title))
+  // console.log('task: ' + dataTask.map((task) => task.id))
+  // console.log('timer: ' + dataTimer.map((task) => task.taskId))
   
   useEffect(() => {
     const getBoard = localStorage.getItem('board') 
     const getCol = localStorage.getItem('col')
     const getTask = localStorage.getItem('task')
     const getDarkMode = localStorage.getItem('mode')
+    const getTimer = localStorage.getItem('timer')
+    
     if (getDarkMode) setDarkMode(JSON.parse(getDarkMode))
     getBoard !== null ? setDataBoard(JSON.parse(getBoard)) : []
     if (getCol) setDataColumn(JSON.parse(getCol))
     if (getTask) setDataTask(JSON.parse(getTask))
+    if (getTimer) setDataTimer(JSON.parse(getTimer))
   },[])
 
   useEffect(() => {
@@ -42,6 +48,10 @@ const App: React.FC = () => {
     localStorage.setItem('mode', JSON.stringify(darkMode))
   },[darkMode])
 
+  useEffect(() => {
+    localStorage.setItem('timer', JSON.stringify(dataTimer))
+  },[dataTimer])
+
   // boards-------------------------------------------------
   const addBoard = (title: string, bg: string) => {
     setDataBoard([...dataBoard , {id: uuid(), title, slug: title, bg}])
@@ -51,6 +61,7 @@ const App: React.FC = () => {
     setDataBoard(dataBoard.filter((board) => board.id !== id))
     setDataColumn(dataColumn.filter((col) => col.boardId !== id))
     setDataTask(dataTask.filter((task) => task.boardId !== id))
+    setDataTimer(dataTimer.filter((data) => data.boardId !== id))
   }
 
   const updateBoard = (id:string, newTitle:string) => {
@@ -65,6 +76,7 @@ const App: React.FC = () => {
   const deleteColumn = (id:string) => {
     setDataColumn(dataColumn.filter((data) => data.id !== id))
     setDataTask(dataTask.filter((data) =>  data.colId !== id))
+    setDataTimer(dataTimer.filter((data) => data.colId !== id))
   }
 
   const updateColumn = (id:string, newTitle:string) => {
@@ -72,12 +84,13 @@ const App: React.FC = () => {
   }
 
   //tasks---------------------------------------------------------------
-  const addTask = (title: string, columnId: string, boardId: string | null) => {
-    setDataTask([...dataTask, {id: uuid(),boardId, colId: columnId, title, description: '', completed: false, minutes: 25, seconds: 0, isOn: false}])
+  const addTask = ( id:string, title: string, columnId: string, boardId: string | null) => {
+    setDataTask([...dataTask, {id, boardId, colId: columnId, title, description: '', completed: false,}])
   }
 
   const deleteTask = (id:string) => {
     setDataTask(dataTask.filter((data) => data.id !== id))
+    setDataTimer(dataTimer.filter((data) => data.taskId !== id))
   }
 
   const updateTask = (id:string, newTitle:string) => {
@@ -92,10 +105,19 @@ const App: React.FC = () => {
     setDataTask(dataTask.map((data) => (data.id === id ? {...data, description:newDescription} : data)))
   }
 
-  const updateTaskTimer = (id:string, newMinutes:number, newSeconds:number) => {
-    setDataTask(dataTask.map((data) => (data.id === id ? {...data, minutes:newMinutes, seconds:newSeconds} : data)))
+
+  // timer---------------------------------------------------------------
+  const addTimer = (taskId:string, boardId:string, colId:string) => {
+    setDataTimer([...dataTimer, {taskId, boardId, colId, id:uuid() , minutes: 25, seconds: 0, isOn: false}])
   }
 
+  const updateTaskTimer = (id:string, newMinutes:number, newSeconds:number) => {
+    setDataTimer(dataTimer.map((data) => (data.id === id ? {...data, minutes:newMinutes, seconds:newSeconds} : data)))
+  }
+
+  const pauseStartTaskTimer = (id:string) => {
+    setDataTimer(dataTimer.map((data) => (data.id === id ? {...data, isOn:!data.isOn} : data)))
+  }
   
   
   return (
@@ -114,7 +136,7 @@ const App: React.FC = () => {
    </div>
       <Routes>
         <Route path='/' element={<Boards updateBoard={updateBoard}  setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-        <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+        <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
       </Routes>
    </div>
   )

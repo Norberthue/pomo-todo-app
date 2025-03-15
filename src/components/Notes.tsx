@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import {Task} from '../Types'
 
 interface NotesForms {
-    task: Task;
+    task: Task ;
     darkMode: boolean;
     updateTaskDescription:(id:string, newDescription:string) => void;
 }
@@ -11,7 +11,7 @@ interface NotesForms {
 const Notes = ({task, darkMode, updateTaskDescription}:NotesForms) => {
     const [updatedTaskDescriptionValue, setUpdatedTaskDescriptionValue] = useState('') 
     const textareaRef = useRef<HTMLTextAreaElement | null>(null) 
-    const  [openEditDisc, setOpenEditDisc] = useState(false) 
+    const [openEditDisc, setOpenEditDisc] = useState(false) 
     
     const handleChangeTaskDesc = (e: React.FormEvent | KeyboardEvent) => {
         e.preventDefault()
@@ -24,7 +24,7 @@ const Notes = ({task, darkMode, updateTaskDescription}:NotesForms) => {
     // submit textarea with enter key
     const handleUserKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
-        // e.preventDefault();
+        e.preventDefault();
         handleChangeTaskDesc(e as unknown as React.FormEvent); 
         }   
     };

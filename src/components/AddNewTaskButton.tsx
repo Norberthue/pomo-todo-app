@@ -1,23 +1,29 @@
 import React, { useState } from 'react'
 import { Column } from '../Types'
-import { easeIn, easeInOut, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
+import { v4 as uuid } from 'uuid'
+
 interface AddNewTaskButtonForms {
-    addTask: (title: string, columnId: string, boardId: string | null) => void;
+    addTask: (id:string , title: string, columnId: string, boardId: string | null) => void;
     darkMode: boolean;
     column: Column;
+    addTimer: (taskId:string, boardId:string, colId:string) => void;
   
 }
 
 
-const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) => {
+const AddNewTaskButton = ({ addTask, addTimer, darkMode, column}: AddNewTaskButtonForms) => {
     const [taskTitle, setTaskTitle] = useState('')
     const [editId, setEditId] = useState('')  
+    const idForTask = uuid()
     
-    const handleTaskSubmit = (e: React.FormEvent , id: string , boardId: string | null) => {
+    const handleTaskSubmit = (e: React.FormEvent , colId: string , boardId: string | null) => {
         e.preventDefault()
         if (taskTitle.length > 0 ) {
-            addTask(taskTitle, id, boardId)
+            addTask(idForTask , taskTitle, colId, boardId)
+            addTimer(idForTask, boardId!, colId)
             setTaskTitle('')
+            
         }
     } 
 

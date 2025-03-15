@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Board, Column, Task } from '../Types'
+import { Board, Column, Task, Timer } from '../Types'
 import { useParams } from 'react-router-dom'
 import CreateNewColumn from './CreateNewColumn';
 import Columns from './Columns';
@@ -11,7 +11,7 @@ interface ShowBoardProps  {
     dataColumn: Column[];
     dataTask: Task[];
     addColumn: (title: string, boardId: string | null) => void;
-    addTask: (title: string, columnId: string, boardId: string | null) => void;
+    addTask: (id:string, title: string, columnId: string, boardId: string | null) => void;
     darkMode: boolean;
     setDarkMode: (set:boolean) => void ;
     deleteColumn: (id:string) => void;
@@ -22,10 +22,13 @@ interface ShowBoardProps  {
     setDataTask:(set: Task[]) => void;
     updateTaskDescription:(id:string, newDescription:string) => void;
     updateTaskTimer:(id:string, minutes:number, seconds:number) => void;
+    addTimer: (taskId:string, boardId:string, colId:string) => void;
+    dataTimer: Timer[];
+    pauseStartTaskTimer: (id:string) => void;
     
 }
 
-const ShowBoard = ({dataBoard, dataColumn, setDataTask, addColumn, updateTaskTimer, updateTaskDescription, toggleCompleteTask, updateColumn, deleteColumn, addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
+const ShowBoard = ({dataBoard, dataColumn, dataTimer, addTimer, pauseStartTaskTimer, setDataTask, addColumn, updateTaskTimer, updateTaskDescription, toggleCompleteTask, updateColumn, deleteColumn, addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
     const {slug} = useParams()
     const [board, setBoard] = useState<Board | null>(null)
     const color = board?.bg 
@@ -51,7 +54,7 @@ const ShowBoard = ({dataBoard, dataColumn, setDataTask, addColumn, updateTaskTim
         </div>
         <div className='flex gap-3 ml-5  overflow-x-auto scrollbar  '>
             <CreateNewColumn board={board} addColumn={addColumn} darkMode={darkMode}/>
-            <Columns updateTaskTimer={updateTaskTimer}  updateTaskDescription={updateTaskDescription} setDataTask={setDataTask} board={board} deleteColumn={deleteColumn} updateTask={updateTask} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
+            <Columns dataTimer={dataTimer} pauseStartTaskTimer={pauseStartTaskTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer}  updateTaskDescription={updateTaskDescription} setDataTask={setDataTask} board={board} deleteColumn={deleteColumn} updateTask={updateTask} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
         </div>
     </div>
   )
