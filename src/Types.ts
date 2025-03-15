@@ -28,5 +28,7 @@ export interface Timer {
     minutes: number;
     seconds: number;
     isOn: boolean;
+    fixedPomodoroTime:number;
+    fixedBreakTime:number
 }
 

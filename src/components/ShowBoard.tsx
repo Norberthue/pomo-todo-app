@@ -25,10 +25,10 @@ interface ShowBoardProps  {
     addTimer: (taskId:string, boardId:string, colId:string) => void;
     dataTimer: Timer[];
     pauseStartTaskTimer: (id:string) => void;
-    
+    updateFixedTime: (id:string, newBreakTime:number, newPomoTime:number) => void;
 }
 
-const ShowBoard = ({dataBoard, dataColumn, dataTimer, addTimer, pauseStartTaskTimer, setDataTask, addColumn, updateTaskTimer, updateTaskDescription, toggleCompleteTask, updateColumn, deleteColumn, addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
+const ShowBoard = ({dataBoard, dataColumn, dataTimer,   updateFixedTime, addTimer, pauseStartTaskTimer, setDataTask, addColumn, updateTaskTimer, updateTaskDescription, toggleCompleteTask, updateColumn, deleteColumn, addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
     const {slug} = useParams()
     const [board, setBoard] = useState<Board | null>(null)
     const color = board?.bg 
@@ -54,7 +54,7 @@ const ShowBoard = ({dataBoard, dataColumn, dataTimer, addTimer, pauseStartTaskTi
         </div>
         <div className='flex gap-3 ml-5  overflow-x-auto scrollbar  '>
             <CreateNewColumn board={board} addColumn={addColumn} darkMode={darkMode}/>
-            <Columns dataTimer={dataTimer} pauseStartTaskTimer={pauseStartTaskTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer}  updateTaskDescription={updateTaskDescription} setDataTask={setDataTask} board={board} deleteColumn={deleteColumn} updateTask={updateTask} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
+            <Columns dataTimer={dataTimer} pauseStartTaskTimer={pauseStartTaskTimer}   updateFixedTime={updateFixedTime} addTimer={ addTimer} updateTaskTimer={updateTaskTimer}  updateTaskDescription={updateTaskDescription} setDataTask={setDataTask} board={board} deleteColumn={deleteColumn} updateTask={updateTask} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
         </div>
     </div>
   )

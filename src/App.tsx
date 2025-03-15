@@ -108,11 +108,15 @@ const App: React.FC = () => {
 
   // timer---------------------------------------------------------------
   const addTimer = (taskId:string, boardId:string, colId:string) => {
-    setDataTimer([...dataTimer, {taskId, boardId, colId, id:uuid() , minutes: 25, seconds: 0, isOn: false}])
+    setDataTimer([...dataTimer, {taskId, boardId, colId, id:uuid() , minutes: 25, seconds: 0, isOn: false, fixedBreakTime: 5, fixedPomodoroTime:25}])
   }
 
   const updateTaskTimer = (id:string, newMinutes:number, newSeconds:number) => {
     setDataTimer(dataTimer.map((data) => (data.id === id ? {...data, minutes:newMinutes, seconds:newSeconds} : data)))
+  }
+
+  const updateFixedTime = (id:string, newPomoTime:number, newBreakTime:number) => {
+    setDataTimer(dataTimer.map((data) => (data.id === id ? {...data, fixedBreakTime:newBreakTime , fixedPomodoroTime:newPomoTime } : data)))
   }
 
   const pauseStartTaskTimer = (id:string) => {
@@ -136,7 +140,7 @@ const App: React.FC = () => {
    </div>
       <Routes>
         <Route path='/' element={<Boards updateBoard={updateBoard}  setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-        <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+        <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
       </Routes>
    </div>
   )
