@@ -1,6 +1,7 @@
 
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import { Task, Timer } from '../Types'
+import { p } from 'framer-motion/client';
 
 
 interface TaskTimerProps {
@@ -28,11 +29,11 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
             updateTaskTimer(timer.id, timer.minutes - 1, 59)
           } else {
             if (breakTime) {
-              updateTaskTimer(timer.id, timer.fixedPomodoroTime, 0)
-              setBreakTime(false)
+              updateTaskTimer(timer.id, timer.fixedPomodoroTime, 0);
+              setBreakTime(false);
             } else {
-              updateTaskTimer(timer.id, timer.fixedBreakTime, 0)
-              setBreakTime(true)
+                updateTaskTimer(timer.id, timer.fixedBreakTime, 0)
+                setBreakTime(true)
             }
         }
         } else {
@@ -44,19 +45,30 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
 
     return () => clearInterval(interval)
     
-  },[timer.isOn, timer.seconds, timer.minutes, timer.id, updateTaskTimer, pauseStartTaskTimer, breakTime ])
+  },[timer.isOn, timer.seconds, timer.id, updateTaskTimer, pauseStartTaskTimer, breakTime ])
 
   const pauseTimer = () => {
     pauseStartTaskTimer(timer.id)
   }
-  
+
   let minutes = timer.minutes <= 9 ? `0${timer.minutes}` : timer.minutes
   let seconds = timer.seconds <= 9 ? `0${timer.seconds}` : timer.seconds
+
+  useEffect(() => {
+    if (timer.fixedPomodoroTime !== timerMinutes && !breakTime) {
+      updateTaskTimer(timer.id, timer.fixedPomodoroTime, 0)
+    }
+    }, [timer.fixedPomodoroTime]);
+
+  useEffect(() => {
+    if (timer.fixedBreakTime !== timerMinutes && breakTime) {
+      updateTaskTimer(timer.id, timer.fixedBreakTime, 0)
+    }
+    }, [timer.fixedBreakTime]);
 
   const handleChangePomo = (e: React.FormEvent | KeyboardEvent) => {
       e.preventDefault()
       updateFixedTime(timer.id, timerMinutes, timer.fixedBreakTime)
-     
       setIsSettingsOn(!isSettingsOn)
   }
 
@@ -64,7 +76,9 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
     e.preventDefault()
     updateFixedTime(timer.id, timer.fixedPomodoroTime, timerBreaks)
     setIsSettingsOn(!isSettingsOn)
-}
+  }
+
+  
   
   return (
     <div className='flex flex-col items-center gap-5'>
@@ -77,12 +91,12 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
           <div className={`absolute ${isSettingsOn ? 'block' : 'hidden'} flex justify-evenly items-center gap-5 top-6 right-1/2 sm:right-auto sm:left-1/2 sm:-translate-x-1/2  -transalte-y-1/2  ${darkMode ? 'bg-[#1b1c1d]' : 'bg-[#c0c0c0]'}  rounded-lg p-4`}>
             <form onSubmit={handleChangePomo} className='flex flex-col items-center gap-2  w-[80px]'>
               <h2>Pomodoro</h2>
-              <input maxLength={2} value={timerMinutes} onChange={(e) => {setTimerMinutes(e.target.value)}} className={`${darkMode ? 'bg-[#242222] ' : 'bg-[#e4e4e4]'} pr-2  outline-none focus:ring-2 pl-2 pt-1 pb-1 focus:ring-blue-500 rounded-md w-[35px]`}></input>
+              <input maxLength={2} value={timerMinutes} onChange={(e) => {setTimerMinutes(Number(e.target.value))}} className={`${darkMode ? 'bg-[#242222] ' : 'bg-[#e4e4e4]'} pr-2  outline-none focus:ring-2 pl-2 pt-1 pb-1 focus:ring-blue-500 rounded-md w-[35px]`}></input>
               <button type="submit">Submit</button>
             </form>
             <form onSubmit={handleChangeBreak} className='flex flex-col items-center gap-2 w-[80px]'>
               <h2>Break</h2>
-              <input maxLength={2} value={timerBreaks} onChange={(e) => setTimerBreaks(e.target.value)} className={`${darkMode ? 'bg-[#242222] ' : 'bg-[#e4e4e4]'} outline-none focus:ring-2 pl-2 pr-2 pt-1 pb-1 focus:ring-blue-500 rounded-md w-[35px]`}></input>
+              <input maxLength={2} value={timerBreaks} onChange={(e) => setTimerBreaks(Number(e.target.value))} className={`${darkMode ? 'bg-[#242222] ' : 'bg-[#e4e4e4]'} outline-none focus:ring-2 pl-2 pr-2 pt-1 pb-1 focus:ring-blue-500 rounded-md w-[35px]`}></input>
               <button>Submit</button>
             </form>
           </div>
