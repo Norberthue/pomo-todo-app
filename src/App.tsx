@@ -3,7 +3,8 @@ import Boards from './components/Boards'
 import  { Board, Column, Task, Timer } from  './Types'
 import { Routes, Route } from 'react-router-dom'
 import ShowBoard from './components/ShowBoard'
-import { v4 as uuid } from 'uuid'
+import { db } from './FirebaseConfig'; // Import your Firebase configuration
+import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc } from 'firebase/firestore';
 
 const App: React.FC = () => {
   const [dataBoard, setDataBoard] = useState<Board[]>([])
@@ -16,112 +17,230 @@ const App: React.FC = () => {
   // console.log('board: ' + dataBoard)
   // console.log('col: ' + dataColumn)
   // console.log('task: ' + dataTask.map((task) => task.id))
-  // console.log('timer: ' + dataTimer.map((task) => task.taskId))
+  // console.log('timer: ' + dataTimer.map((task) => JSON.stringify(task)))
   
   useEffect(() => {
-    const getBoard = localStorage.getItem('board') 
-    const getCol = localStorage.getItem('col')
-    const getTask = localStorage.getItem('task')
-    const getDarkMode = localStorage.getItem('mode')
-    const getTimer = localStorage.getItem('timer')
-    
-    if (getDarkMode) setDarkMode(JSON.parse(getDarkMode))
-    getBoard !== null ? setDataBoard(JSON.parse(getBoard)) : []
-    if (getCol) setDataColumn(JSON.parse(getCol))
-    if (getTask) setDataTask(JSON.parse(getTask))
-    if (getTimer) setDataTimer(JSON.parse(getTimer))
-  },[])
+    const fetchData = async () => {
+      try {
+        const boardSnapshot = await getDocs(collection(db, 'boards'));
+        const boards = boardSnapshot.docs.map(doc => {
+          const data = doc.data();
+          return { id: doc.id, title: data.title, slug: data.slug, bg: data.bg };
+        });
+        setDataBoard(boards);
+
+        const columnSnapshot = await getDocs(collection(db, 'columns'));
+        const columns = columnSnapshot.docs.map(doc => {
+          const data = doc.data();
+          return { id: doc.id, boardId: data.boardId, title: data.title };
+        });
+        setDataColumn(columns);
+
+        const taskSnapshot = await getDocs(collection(db, 'tasks'));
+        const tasks = taskSnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            boardId: data.boardId || '',
+            colId: data.colId || '',
+            title: data.title || '',
+            description: data.description || '',
+            completed: data.completed || false,
+            hasTimer: data.hasTimer || false
+          };
+        });
+        setDataTask(tasks);
+
+        const timerSnapshot = await getDocs(collection(db, 'timers'));
+        const timers = timerSnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            taskId: data.taskId || '',
+            boardId: data.boardId || '',
+            colId: data.colId || '',
+            minutes: data.minutes || 0,
+            seconds: data.seconds || 0,
+            isOn: data.isOn || false,
+            fixedBreakTime: data.fixedBreakTime || 5,
+            fixedPomodoroTime: data.fixedPomodoroTime || 25,
+          };
+        });
+        setDataTimer(timers);
+  
+        const mode = localStorage.getItem('mode');
+        if (mode) setDarkMode(JSON.parse(mode));
+      } catch (error) {
+        console.error('Error fetching data from Firebase:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
-      localStorage.setItem('board', JSON.stringify(dataBoard))
-  },[dataBoard])
-
-  useEffect(() => {
-    localStorage.setItem('col', JSON.stringify(dataColumn))
-  },[dataColumn])
-
-  useEffect(() => {
-    localStorage.setItem('task', JSON.stringify(dataTask))
-  },[dataTask])
-
-  useEffect(() => {
-    localStorage.setItem('mode', JSON.stringify(darkMode))
-  },[darkMode])
-
-  useEffect(() => {
-    localStorage.setItem('timer', JSON.stringify(dataTimer))
-  },[dataTimer])
+    localStorage.setItem('mode', JSON.stringify(darkMode));
+  }, [darkMode]);
 
   // boards-------------------------------------------------
-  const addBoard = (title: string, bg: string) => {
-    setDataBoard([...dataBoard , {id: uuid(), title, slug: title, bg}])
-  } 
+  const addBoard = async (title: string, bg: string) => {
+    try {
+      const docRef = await addDoc(collection(db, 'boards'), { title, slug: title, bg });
+      setDataBoard([...dataBoard, { id: docRef.id, title, slug: title, bg }]);
+    } catch (error) {
+      console.error('Error adding board:', error);
+    }
+  };
 
-  const deleteBoard = (id: string) => {
-    setDataBoard(dataBoard.filter((board) => board.id !== id))
-    setDataColumn(dataColumn.filter((col) => col.boardId !== id))
-    setDataTask(dataTask.filter((task) => task.boardId !== id))
-    setDataTimer(dataTimer.filter((data) => data.boardId !== id))
-  }
+  const deleteBoard = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'boards', id));
+      setDataBoard(dataBoard.filter(board => board.id !== id));
+      setDataColumn(dataColumn.filter(col => col.boardId !== id));
+      setDataTask(dataTask.filter(task => task.boardId !== id));
+      setDataTimer(dataTimer.filter(timer => timer.boardId !== id));
+    } catch (error) {
+      console.error('Error deleting board:', error);
+    }
+  };
 
-  const updateBoard = (id:string, newTitle:string) => {
-    setDataBoard(dataBoard.map((data) => (data.id === id ? {...data, title:newTitle } : data)))
-  }
-  
-  //cols--------------------------------------------------------------
-  const addColumn = (title: string, boardId: string | null) => {
-    setDataColumn([...dataColumn, { id: uuid(), title, boardId }])
-  }
+  const updateBoard = async (id: string, newTitle: string) => {
+    try {
+      await updateDoc(doc(db, 'boards', id), { title: newTitle });
+      setDataBoard(dataBoard.map(data => (data.id === id ? { ...data, title: newTitle } : data)));
+    } catch (error) {
+      console.error('Error updating board:', error);
+    }
+  };
 
-  const deleteColumn = (id:string) => {
-    setDataColumn(dataColumn.filter((data) => data.id !== id))
-    setDataTask(dataTask.filter((data) =>  data.colId !== id))
-    setDataTimer(dataTimer.filter((data) => data.colId !== id))
-  }
+  // columns--------------------------------------------------------------
+  const addColumn = async (title: string, boardId: string | null) => {
+    try {
+      const docRef = await addDoc(collection(db, 'columns'), { title, boardId });
+      setDataColumn([...dataColumn, { id: docRef.id, title, boardId }]);
+    } catch (error) {
+      console.error('Error adding column:', error);
+    }
+  };
 
-  const updateColumn = (id:string, newTitle:string) => {
-    setDataColumn(dataColumn.map((data) => (data.id === id ? {...data, title: newTitle} : data)))
-  }
+  const deleteColumn = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'columns', id));
+      setDataColumn(dataColumn.filter(data => data.id !== id));
+      setDataTask(dataTask.filter(data => data.colId !== id));
+      setDataTimer(dataTimer.filter(data => data.colId !== id));
+    } catch (error) {
+      console.error('Error deleting column:', error);
+    }
+  };
 
-  //tasks---------------------------------------------------------------
-  const addTask = ( id:string, title: string, columnId: string, boardId: string | null) => {
-    setDataTask([...dataTask, {id, boardId, colId: columnId, title, description: '', completed: false,}])
-  }
+  const updateColumn = async (id: string, newTitle: string) => {
+    try {
+      await updateDoc(doc(db, 'columns', id), { title: newTitle });
+      setDataColumn(dataColumn.map(data => (data.id === id ? { ...data, title: newTitle } : data)));
+    } catch (error) {
+      console.error('Error updating column:', error);
+    }
+  };
 
-  const deleteTask = (id:string) => {
-    setDataTask(dataTask.filter((data) => data.id !== id))
-    setDataTimer(dataTimer.filter((data) => data.taskId !== id))
-  }
+  // tasks---------------------------------------------------------------
+  const addTask = async (title: string, columnId: string, boardId: string | null) => {
+    try {
+      const docRef = await addDoc(collection(db, 'tasks'), {boardId, colId: columnId, title, description: '', completed: false , hasTimer: false});
+      setDataTask([...dataTask, { id: docRef.id, boardId, colId: columnId, title, description: '', completed: false , hasTimer: false}]);
+    } catch (error) {
+      console.error('Error adding task:', error);
+    }
+  };
 
-  const updateTask = (id:string, newTitle:string) => {
-    setDataTask(dataTask.map((data) => (data.id === id ? {...data, title:newTitle} : data)))
-  }
+  const deleteTask = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'tasks', id));
+      setDataTask(dataTask.filter(data => data.id !== id));
+      setDataTimer(dataTimer.filter(data => data.taskId !== id));
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  };
 
-  const toggleCompleteTask = (id:string) => {
-    setDataTask(dataTask.map((data) => (data.id === id ? {...data, completed: !data.completed} : data)) )
-  }
+  const updateTask = async (id: string, newTitle: string) => {
+    try {
+      await updateDoc(doc(db, 'tasks', id), { title: newTitle });
+      setDataTask(dataTask.map(data => (data.id === id ? { ...data, title: newTitle } : data)));
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
+  };
 
-  const updateTaskDescription = (id:string, newDescription:string) => {
-    setDataTask(dataTask.map((data) => (data.id === id ? {...data, description:newDescription} : data)))
-  }
+  const updateTaskHasTimer = async (id: string, updatedHasTimer: boolean) => {
+    try {
+      await updateDoc(doc(db, 'tasks', id), { hasTimer:updatedHasTimer });
+      setDataTask(dataTask.map(data => (data.id === id ? { ...data, hasTimer:updatedHasTimer } : data)));
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
+  };
 
+  const toggleCompleteTask = async (id: string) => {
+    try {
+      const task = dataTask.find(data => data.id === id);
+      if (task) {
+        await updateDoc(doc(db, 'tasks', id), { completed: !task.completed });
+        setDataTask(dataTask.map(data => (data.id === id ? { ...data, completed: !data.completed } : data)));
+      }
+    } catch (error) {
+      console.error('Error toggling task completion:', error);
+    }
+  };
+
+  const updateTaskDescription = async (id: string, newDescription: string) => {
+    try {
+      await updateDoc(doc(db, 'tasks', id), { description: newDescription });
+      setDataTask(dataTask.map(data => (data.id === id ? { ...data, description: newDescription } : data)));
+    } catch (error) {
+      console.error('Error updating task description:', error);
+    }
+  };
 
   // timer---------------------------------------------------------------
-  const addTimer = (taskId:string, boardId:string, colId:string) => {
-    setDataTimer([...dataTimer, {taskId, boardId, colId, id:uuid() , minutes: 25, seconds: 0, isOn: false, fixedBreakTime: 5, fixedPomodoroTime:25}])
-  }
+  const addTimer = async (taskId: string, boardId: string, colId: string) => {
+    try {
+      const docRef = await addDoc(collection(db, 'timers'), { taskId, boardId, colId, minutes: 25, seconds: 0, isOn: false, fixedBreakTime: 5, fixedPomodoroTime: 25});
+      setDataTimer([...dataTimer, { id: docRef.id, taskId, boardId, colId, minutes: 25, seconds: 0, isOn: false, fixedBreakTime: 5, fixedPomodoroTime: 25 }]);
+    } catch (error) {
+      console.error('Error adding timer:', error);
+    }
+  };
 
-  const updateTaskTimer = (id:string, newMinutes:number, newSeconds:number) => {
-    setDataTimer(dataTimer.map((data) => (data.id === id ? {...data, minutes:newMinutes, seconds:newSeconds} : data)))
-  }
+  const updateTaskTimer = async (id: string, newMinutes: number, newSeconds: number) => {
+    try {
+      await updateDoc(doc(db, 'timers', id), { minutes: newMinutes, seconds: newSeconds });
+      setDataTimer(dataTimer.map(data => (data.id === id ? { ...data, minutes: newMinutes, seconds: newSeconds } : data)));
+    } catch (error) {
+      console.error('Error updating timer:', error);
+    }
+  };
 
-  const updateFixedTime = (id:string, newPomoTime:number, newBreakTime:number) => {
-    setDataTimer(dataTimer.map((data) => (data.id === id ? {...data, fixedBreakTime:newBreakTime , fixedPomodoroTime:newPomoTime } : data)))
-  }
+  const updateFixedTime = async (id: string, newPomoTime: number, newBreakTime: number) => {
+    try {
+      await updateDoc(doc(db, 'timers', id), { fixedBreakTime: newBreakTime, fixedPomodoroTime: newPomoTime });
+      setDataTimer(dataTimer.map(data => (data.id === id ? { ...data, fixedBreakTime: newBreakTime, fixedPomodoroTime: newPomoTime } : data)));
+    } catch (error) {
+      console.error('Error updating fixed time:', error);
+    }
+  };
 
-  const pauseStartTaskTimer = (id:string) => {
-    setDataTimer(dataTimer.map((data) => (data.id === id ? {...data, isOn:!data.isOn} : data)))
-  }
+  const pauseStartTaskTimer = async (id: string) => {
+    try {
+      const timer = dataTimer.find(data => data.id === id);
+      if (timer) {
+        await updateDoc(doc(db, 'timers', id), { isOn: !timer.isOn });
+        setDataTimer(dataTimer.map(data => (data.id === id ? { ...data, isOn: !data.isOn } : data)));
+      }
+    } catch (error) {
+      console.error('Error toggling timer state:', error);
+    }
+  };
   
   
   return (
@@ -140,7 +259,7 @@ const App: React.FC = () => {
    </div>
       <Routes>
         <Route path='/' element={<Boards updateBoard={updateBoard}  setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-        <Route path=':slug' element={<ShowBoard deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+        <Route path=':slug' element={<ShowBoard updateTaskHasTimer={updateTaskHasTimer } deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
       </Routes>
    </div>
   )

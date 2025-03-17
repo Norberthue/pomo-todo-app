@@ -4,24 +4,20 @@ import { motion } from 'framer-motion'
 import { v4 as uuid } from 'uuid'
 
 interface AddNewTaskButtonForms {
-    addTask: (id:string , title: string, columnId: string, boardId: string | null) => void;
+    addTask: (title: string, columnId: string, boardId: string | null) => void;
     darkMode: boolean;
     column: Column;
-    addTimer: (taskId:string, boardId:string, colId:string) => void;
-  
 }
 
 
-const AddNewTaskButton = ({ addTask, addTimer, darkMode, column}: AddNewTaskButtonForms) => {
+const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) => {
     const [taskTitle, setTaskTitle] = useState('')
     const [editId, setEditId] = useState('')  
-    const idForTask = uuid()
     
     const handleTaskSubmit = (e: React.FormEvent , colId: string , boardId: string | null) => {
         e.preventDefault()
         if (taskTitle.length > 0 ) {
-            addTask(idForTask , taskTitle, colId, boardId)
-            addTimer(idForTask, boardId!, colId)
+            addTask(taskTitle, colId, boardId)
             setTaskTitle('')
             
         }

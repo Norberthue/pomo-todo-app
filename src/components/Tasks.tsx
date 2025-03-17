@@ -16,9 +16,11 @@ interface TasksForms {
     dataTimer: Timer[];
     pauseStartTaskTimer: (id:string) => void;
     updateFixedTime: (id:string, newBreakTime:number, newPomoTime:number) => void;
+    addTimer: (taskId:string, boardId:string, colId:string) => void;
+    updateTaskHasTimer:(id: string, updatedHasTimer: boolean) => void;
 }
 
-const Tasks = ({darkMode, dataTask, dataTimer, deleteTask, updateFixedTime, pauseStartTaskTimer, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
+const Tasks = ({darkMode, dataTask, dataTimer, updateTaskHasTimer, deleteTask, updateFixedTime, addTimer, pauseStartTaskTimer, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
     const [updatedTaskTitle, setUpdatedTaskTitle] = useState('')
     const [taskId, setTaskId] = useState('')  
     const textareaRef = useRef<HTMLTextAreaElement | null>(null)
@@ -94,7 +96,7 @@ const Tasks = ({darkMode, dataTask, dataTimer, deleteTask, updateFixedTime, paus
                                 </form>
                             )}
                     </motion.div>
-                    {isTaskOpen && <ModalTasks updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} dataTask={dataTask} getTask={getTask} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode}  setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
+                    {isTaskOpen && <ModalTasks updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} dataTask={dataTask} getTask={getTask} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode}  setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
                 </div>
             )
             

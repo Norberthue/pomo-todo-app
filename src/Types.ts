@@ -18,6 +18,7 @@ export interface Task {
     title: string;
     description: string;
     completed: boolean;
+    hasTimer: boolean;
 }
 
 export interface Timer {

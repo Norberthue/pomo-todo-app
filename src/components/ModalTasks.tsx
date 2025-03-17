@@ -15,13 +15,25 @@ interface ModalTaskForms {
     dataTimer: Timer[];
     pauseStartTaskTimer: (id:string) => void;
     updateFixedTime: (id:string, newBreakTime:number, newPomoTime:number) => void;
-}
+    addTimer: (taskId:string, boardId:string, colId:string) => void;
+    updateTaskHasTimer:(id: string, updatedHasTimer: boolean) => void;
+}   
 
-const ModalTasks = ({updateTaskTimer, getTask, dataTimer, updateFixedTime, pauseStartTaskTimer, dataTask, toggleCompleteTask, updateTaskDescription, setIsTaskOpen , darkMode}: ModalTaskForms) => {
+const ModalTasks = ({updateTaskTimer, getTask, dataTimer, addTimer, updateTaskHasTimer, updateFixedTime, pauseStartTaskTimer, dataTask, toggleCompleteTask, updateTaskDescription, setIsTaskOpen , darkMode}: ModalTaskForms) => {
     
     const findTask = dataTask.filter((task) => task.id === getTask)
 
     const task = findTask[0]
+
+    const  handleCreateTimer = () => {
+        if (task.id && task.boardId && task.colId) {
+            addTimer(task.id, task.boardId, task.colId);
+        } else {
+            console.error("Task properties are missing or invalid.");
+        }
+        updateTaskHasTimer(task.id, true)
+        
+    }
     
     return (
     <div onClick={() => {setIsTaskOpen(false)}} className={` fixed z-20 top-0 left-0 w-screen h-full bg-[#00000050] `}>
@@ -48,7 +60,13 @@ const ModalTasks = ({updateTaskTimer, getTask, dataTimer, updateFixedTime, pause
                     <h1 className="text-lg">Timer</h1>
                 </div>
                 <div className="flex items-center justify-center">
-                    <TaskTimer updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} darkMode={darkMode} updateTaskTimer={updateTaskTimer} task={task}></TaskTimer>
+                    {task.hasTimer ? 
+                    (<TaskTimer updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} darkMode={darkMode} updateTaskTimer={updateTaskTimer} task={task}></TaskTimer>) 
+                    : 
+                    (<button onClick={() => handleCreateTimer()} className={` p-2 rounded-sm duration-300 cursor-pointer ${darkMode === false ? 'bg-gray-300 text-black  hover:bg-[#c9cbcc] ' 
+                            : 'bg-[#34383b] text-white hover:bg-[#434647] '}`}>Create Timer</button>)}
+                    
+                    
                 </div>
         </div>
     </div>
