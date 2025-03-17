@@ -24,9 +24,10 @@ interface ColumnsForms {
     pauseStartTaskTimer: (id:string) => void;
     updateFixedTime: (id:string, newBreakTime:number, newPomoTime:number) => void;
     updateTaskHasTimer:(id: string, updatedHasTimer: boolean) => void;
+    updateTaskOrder: (task: Task[]) => void;
 }
 
-const Columns = ({addTask ,dataTimer, updateTask, addTimer, updateTaskHasTimer, updateFixedTime, pauseStartTaskTimer, deleteTask, setDataTask, updateTaskTimer, updateTaskDescription, toggleCompleteTask, dataTask, dataColumn, board, deleteColumn,  updateColumn, darkMode}: ColumnsForms) => {
+const Columns = ({addTask ,dataTimer, updateTask, updateTaskOrder, addTimer, updateTaskHasTimer, updateFixedTime, pauseStartTaskTimer, deleteTask, setDataTask, updateTaskTimer, updateTaskDescription, toggleCompleteTask, dataTask, dataColumn, board, deleteColumn,  updateColumn, darkMode}: ColumnsForms) => {
     const [updatedColumnTitle, setUpdatedColumnTitle] = useState('')
     const [columnId, setColumnId] = useState('') 
     
@@ -48,7 +49,6 @@ const Columns = ({addTask ,dataTimer, updateTask, addTimer, updateTaskHasTimer, 
         const indicators = getIndicators(column);
         const { element } = getNearestIndicator(e, indicators);
         
-
         const before = (element).dataset.before || "-1";
         
         if (before !== cardId) {
@@ -71,7 +71,10 @@ const Columns = ({addTask ,dataTimer, updateTask, addTimer, updateTaskHasTimer, 
                 copy.splice(insertAtIndex, 0, cardToTransfer);
             }
 
+            updateTaskOrder(copy);
             setDataTask(copy);
+
+           
         }
     };
     

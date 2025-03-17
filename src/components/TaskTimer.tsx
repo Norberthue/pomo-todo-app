@@ -17,8 +17,6 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
   const timer = dataTimer.filter((data) => data.taskId === task.id)[0]
   const [timerMinutes, setTimerMinutes] = useState<number>(timer.fixedPomodoroTime)
   const [timerBreaks, setTimerBreaks] = useState<number>(timer.fixedBreakTime)
-  console.log("timer task id " + dataTimer.map((data) => data.taskId))
-  console.log("task id " + task.id)
   
   // update minutes and seconds and change it to break and pomo
   useEffect(() => {

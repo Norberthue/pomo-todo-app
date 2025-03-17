@@ -4,7 +4,8 @@ import  { Board, Column, Task, Timer } from  './Types'
 import { Routes, Route } from 'react-router-dom'
 import ShowBoard from './components/ShowBoard'
 import { db } from './FirebaseConfig'; // Import your Firebase configuration
-import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { a } from 'framer-motion/client'
 
 const App: React.FC = () => {
   const [dataBoard, setDataBoard] = useState<Board[]>([])
@@ -14,10 +15,10 @@ const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false)
   
   
-  // console.log('board: ' + dataBoard)
-  // console.log('col: ' + dataColumn)
-  // console.log('task: ' + dataTask.map((task) => task.id))
-  // console.log('timer: ' + dataTimer.map((task) => JSON.stringify(task)))
+  console.log('board: ' + dataBoard)
+  console.log('col: ' + dataColumn)
+  console.log('task: ' + dataTask.map((task) => task.id))
+  console.log('timer: ' + dataTimer.map((task) => JSON.stringify(task)))
   
   useEffect(() => {
     const fetchData = async () => {
@@ -68,14 +69,20 @@ const App: React.FC = () => {
         });
         setDataTimer(timers);
   
-        const mode = localStorage.getItem('mode');
-        if (mode) setDarkMode(JSON.parse(mode));
+        
       } catch (error) {
         console.error('Error fetching data from Firebase:', error);
       }
     };
 
     fetchData();
+  }, []);
+
+
+  useEffect(() => {
+    const mode = JSON.parse(localStorage.getItem('mode') || 'false');
+    setDarkMode(mode);
+    
   }, []);
 
   useEffect(() => {
@@ -96,6 +103,25 @@ const App: React.FC = () => {
     try {
       await deleteDoc(doc(db, 'boards', id));
       setDataBoard(dataBoard.filter(board => board.id !== id));
+      const columnsToDelete = dataColumn.filter(col => col.boardId === id);
+      const tasksToDelete = dataTask.filter(task => task.boardId === id);
+      const timersToDelete = dataTimer.filter(timer => timer.boardId === id);
+
+      // Delete related columns
+      for (const col of columnsToDelete) {
+        await deleteDoc(doc(db, 'columns', col.id));
+      }
+
+      // Delete related tasks
+      for (const task of tasksToDelete) {
+        await deleteDoc(doc(db, 'tasks', task.id));
+      }
+
+      // Delete related timers
+      for (const timer of timersToDelete) {
+        await deleteDoc(doc(db, 'timers', timer.id));
+      }
+
       setDataColumn(dataColumn.filter(col => col.boardId !== id));
       setDataTask(dataTask.filter(task => task.boardId !== id));
       setDataTimer(dataTimer.filter(timer => timer.boardId !== id));
@@ -126,6 +152,20 @@ const App: React.FC = () => {
   const deleteColumn = async (id: string) => {
     try {
       await deleteDoc(doc(db, 'columns', id));
+      const tasksToDelete = dataTask.filter(task => task.colId === id);
+      const timersToDelete = dataTimer.filter(timer => timer.colId === id);
+
+     
+      // Delete related tasks
+      for (const task of tasksToDelete) {
+        await deleteDoc(doc(db, 'tasks', task.id));
+      }
+
+      // Delete related timers
+      for (const timer of timersToDelete) {
+        await deleteDoc(doc(db, 'timers', timer.id));
+      }
+
       setDataColumn(dataColumn.filter(data => data.id !== id));
       setDataTask(dataTask.filter(data => data.colId !== id));
       setDataTimer(dataTimer.filter(data => data.colId !== id));
@@ -153,9 +193,29 @@ const App: React.FC = () => {
     }
   };
 
+  const updateTaskOrder = async (tasks: Task[]) => {
+    try {
+      for (const task of tasks) {
+        await updateDoc(doc(db, 'tasks', task.id), { colId: task.colId });
+      }
+      setDataTask(tasks);
+      
+    } catch (error) {
+      console.error('Error updating task order:', error);
+    }
+  };
+
   const deleteTask = async (id: string) => {
     try {
       await deleteDoc(doc(db, 'tasks', id));
+
+      const timersToDelete = dataTimer.filter(timer => timer.taskId === id);
+
+      // Delete related timers
+      for (const timer of timersToDelete) {
+        await deleteDoc(doc(db, 'timers', timer.id));
+      }
+
       setDataTask(dataTask.filter(data => data.id !== id));
       setDataTimer(dataTimer.filter(data => data.taskId !== id));
     } catch (error) {
@@ -259,7 +319,7 @@ const App: React.FC = () => {
    </div>
       <Routes>
         <Route path='/' element={<Boards updateBoard={updateBoard}  setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-        <Route path=':slug' element={<ShowBoard updateTaskHasTimer={updateTaskHasTimer } deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+        <Route path=':slug' element={<ShowBoard updateTaskOrder={updateTaskOrder} updateTaskHasTimer={updateTaskHasTimer } deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
       </Routes>
    </div>
   )
