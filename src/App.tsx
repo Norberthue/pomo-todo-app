@@ -15,11 +15,12 @@ const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false)
   
   
-  console.log('board: ' + dataBoard)
-  console.log('col: ' + dataColumn)
-  console.log('task: ' + dataTask.map((task) => task.id))
-  console.log('timer: ' + dataTimer.map((task) => JSON.stringify(task)))
+  // console.log('board: ' + dataBoard)
+  // console.log('col: ' + dataColumn)
+  // console.log('task: ' + dataTask.map((task) => task.id))
+  // console.log('timer: ' + dataTimer.map((task) => JSON.stringify(task)))
   
+  //fetch all data from firebase
   useEffect(() => {
     const fetchData = async () => {
       try {

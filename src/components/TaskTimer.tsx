@@ -17,25 +17,68 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
   const timer = dataTimer.filter((data) => data.taskId === task.id)[0]
   const [timerMinutes, setTimerMinutes] = useState<number>(timer.fixedPomodoroTime)
   const [timerBreaks, setTimerBreaks] = useState<number>(timer.fixedBreakTime)
+  const [isActive, setIsActive] = useState(true);
+  const [lastTime, setLastTime] = useState(Date.now());
+  const [time, setTime] = useState(timer.seconds);
+  console.log(time)
   
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setIsActive(false);
+        setLastTime(Date.now());
+      } else {
+        setIsActive(true);
+        setTime((prev) => {
+          const elapsed = Math.floor((Date.now() - lastTime) / 1000);
+          const totalSeconds = prev + elapsed;
+          const newMinutes = Math.floor(totalSeconds / 60);
+          const newSeconds = totalSeconds % 60;
+
+          if (newMinutes > 0) {
+            updateTaskTimer(timer.id, timer.minutes - newMinutes, newSeconds);
+          }
+
+          return newSeconds;
+        });
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [lastTime]);
+
   // update minutes and seconds and change it to break and pomo
   useEffect(() => {
+    if (!isActive) return;
+    
+    
+    setTime(1);
+   
+    
     let interval = setInterval(() => {
       if (timer.isOn) {
-        if (timer.seconds === 0) {
+        if (timer.seconds <= 0) {
           if (timer.minutes !== 0) {
-            updateTaskTimer(timer.id, timer.minutes - 1, 59)
+            const newSeconds = timer.seconds - time;
+            if (newSeconds < 0) {
+              const newMinutes = timer.minutes - 1;
+              updateTaskTimer(timer.id, newMinutes, 59 + newSeconds);
+            } else {
+              updateTaskTimer(timer.id, timer.minutes, newSeconds);
+            }
           } else {
             if (breakTime) {
-              updateTaskTimer(timer.id, timer.fixedPomodoroTime, 0);
+              updateTaskTimer(timer.id, timer.fixedPomodoroTime, 2);
               setBreakTime(false);
             } else {
-                updateTaskTimer(timer.id, timer.fixedBreakTime, 0)
+                updateTaskTimer(timer.id, timer.fixedBreakTime, 2)
                 setBreakTime(true)
             }
         }
         } else {
-          updateTaskTimer(timer.id, timer.minutes ,  timer.seconds - 1)
+          updateTaskTimer(timer.id, timer.minutes, (timer.seconds - time) );
+          
         }
     }
     
@@ -43,7 +86,7 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
 
     return () => clearInterval(interval)
     
-  },[timer.isOn, timer.seconds, timer.id, updateTaskTimer, pauseStartTaskTimer, breakTime ])
+  },[timer.isOn, isActive, timer.seconds, timer.id, updateTaskTimer, pauseStartTaskTimer, breakTime ])
 
   const pauseTimer = () => {
     pauseStartTaskTimer(timer.id)
