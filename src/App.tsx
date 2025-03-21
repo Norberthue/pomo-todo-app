@@ -3,9 +3,10 @@ import Boards from './components/Boards'
 import  { Board, Column, Task, Timer } from  './Types'
 import { Routes, Route } from 'react-router-dom'
 import ShowBoard from './components/ShowBoard'
-import { db } from './FirebaseConfig'; // Import your Firebase configuration
-import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc, getDoc } from 'firebase/firestore';
-import { a } from 'framer-motion/client'
+import { db,auth } from './FirebaseConfig'; // Import your Firebase configuration
+import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc, getDoc, writeBatch, orderBy, query, serverTimestamp, where } from 'firebase/firestore';
+import Auth from './components/Auth';
+import { signOut } from 'firebase/auth';
 
 const App: React.FC = () => {
   const [dataBoard, setDataBoard] = useState<Board[]>([])
@@ -13,33 +14,111 @@ const App: React.FC = () => {
   const [dataTask, setDataTask] = useState<Task[]>([])
   const [dataTimer, setDataTimer] = useState<Timer[]>([])
   const [darkMode, setDarkMode] = useState(false)
-  
+  const [user, setUser] = useState(auth.currentUser);
   
   // console.log('board: ' + dataBoard)
   // console.log('col: ' + dataColumn)
   // console.log('task: ' + dataTask.map((task) => task.id))
   // console.log('timer: ' + dataTimer.map((task) => JSON.stringify(task)))
-  
-  //fetch all data from firebase
+
+  //user authentication
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const boardSnapshot = await getDocs(collection(db, 'boards'));
-        const boards = boardSnapshot.docs.map(doc => {
-          const data = doc.data();
-          return { id: doc.id, title: data.title, slug: data.slug, bg: data.bg };
-        });
-        setDataBoard(boards);
+    auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        fetchData();
+      } else {
+        setDataTask([]);
+        setDataColumn([]);
+        setDataBoard([]);
+        setDataTimer([]);
+        //delete boards which doesnt have user id
+        const deleteBoardsWithoutUserId = async () => {
+          try {
+            const boardSnapshot = await getDocs(collection(db, 'boards'));
+            const boardsWithoutUserId = boardSnapshot.docs.filter(doc => !doc.data().userId);
+            const columnSnapshot = await getDocs(collection(db, 'columns'));
+            const taskSnapshot = await getDocs(collection(db, 'tasks'));
+            const timerSnapshot = await getDocs(collection(db, 'timers'));
 
-        const columnSnapshot = await getDocs(collection(db, 'columns'));
-        const columns = columnSnapshot.docs.map(doc => {
-          const data = doc.data();
-          return { id: doc.id, boardId: data.boardId, title: data.title };
-        });
-        setDataColumn(columns);
+            const columnsToDelete = columnSnapshot.docs
+              .map(doc => ({ ...doc.data(), id: doc.id } as Column))
+              .filter(col => boardsWithoutUserId.some(board => board.id === col.boardId));
 
-        const taskSnapshot = await getDocs(collection(db, 'tasks'));
-        const tasks = taskSnapshot.docs.map(doc => {
+            const tasksToDelete = taskSnapshot.docs
+              .map(doc => ({ id: doc.id, ...doc.data() }))
+              .filter(task => boardsWithoutUserId.some(board => board.id === (task as Task).boardId));
+
+            const timersToDelete = timerSnapshot.docs
+              .map(doc => ({ id: doc.id, ...doc.data() }))
+              .filter(timer => boardsWithoutUserId.some(board => board.id === (timer as Timer).boardId));
+
+            for (const col of columnsToDelete) {
+              await deleteDoc(doc(db, 'columns', col.id));
+            }
+
+            for (const task of tasksToDelete) {
+              await deleteDoc(doc(db, 'tasks', task.id));
+            }
+
+            for (const timer of timersToDelete) {
+              await deleteDoc(doc(db, 'timers', timer.id));
+            }
+            for (const board of boardsWithoutUserId) {
+              await deleteDoc(doc(db, 'boards', board.id));
+            }
+          } catch (error) {
+            console.error('Error deleting boards without userId:', error);
+          }
+        };
+        deleteBoardsWithoutUserId();
+      }
+    });
+  }, []);
+
+  const handleSignOut = async () => {
+    await signOut(auth);
+    setUser(null);
+    setDataTask([]);
+    setDataColumn([]);
+    setDataBoard([]);
+    setDataTimer([]);
+  };
+
+//fetch all data from firebase
+  const fetchData = async () => {
+    const user = auth.currentUser;
+    if (!user) return [];
+    
+    const boardCollection = collection(db, 'boards');
+    const columsCollection = collection(db, 'columns')
+    
+    try {
+      //get boards data and filter it by user id
+      const q_boards =  query(boardCollection, where('userId', '==', user.uid), orderBy('createdAt', 'asc'));
+      const boardSnapshot = await getDocs(q_boards);
+      const boards = boardSnapshot.docs
+        .map(doc => {
+          const data = doc.data();
+          return { id: doc.id, title: data.title, slug: data.slug, bg: data.bg, userId: data.userId, createdAt:data.createdAt };
+        })
+      setDataBoard(boards);
+      
+      //get columns data and filter it by board id
+      const q_columns = query(columsCollection, orderBy('createdAt', 'asc'))
+      const columnSnapshot = await getDocs(q_columns)
+      const columns = columnSnapshot.docs
+        .map(doc => {
+          const data = doc.data();
+          return { id: doc.id, boardId: data.boardId, title: data.title, userId: data.userId, createdAt:data.createdAt };
+        })
+        .filter(column => boards.some(board => board.id === column.boardId));
+      setDataColumn(columns);
+
+      //get tasks data and filter it by board id
+      const taskSnapshot = await getDocs(collection(db, 'tasks'));
+      const tasks = taskSnapshot.docs
+        .map(doc => {
           const data = doc.data();
           return {
             id: doc.id,
@@ -48,13 +127,17 @@ const App: React.FC = () => {
             title: data.title || '',
             description: data.description || '',
             completed: data.completed || false,
-            hasTimer: data.hasTimer || false
+            hasTimer: data.hasTimer || false,
+            userId: data.userId,
           };
-        });
-        setDataTask(tasks);
+        })
+        .filter(task => boards.some(board => board.id === task.boardId));
+      setDataTask(tasks);
 
-        const timerSnapshot = await getDocs(collection(db, 'timers'));
-        const timers = timerSnapshot.docs.map(doc => {
+      //get timers data and filter it by task id
+      const timerSnapshot = await getDocs(collection(db, 'timers'));
+      const timers = timerSnapshot.docs
+        .map(doc => {
           const data = doc.data();
           return {
             id: doc.id,
@@ -66,20 +149,18 @@ const App: React.FC = () => {
             isOn: data.isOn || false,
             fixedBreakTime: data.fixedBreakTime || 5,
             fixedPomodoroTime: data.fixedPomodoroTime || 25,
+            userId: data.userId,
           };
-        });
-        setDataTimer(timers);
-  
-        
-      } catch (error) {
-        console.error('Error fetching data from Firebase:', error);
-      }
-    };
+        })
+        .filter(timer => tasks.some(task => task.id === timer.taskId));
+      setDataTimer(timers);
 
-    fetchData();
-  }, []);
+    } catch (error) {
+      console.error('Error fetching data from Firebase:', error);
+    }
+  };
 
-
+  // dark/light mode-------------------------------------------------
   useEffect(() => {
     const mode = JSON.parse(localStorage.getItem('mode') || 'false');
     setDarkMode(mode);
@@ -93,13 +174,15 @@ const App: React.FC = () => {
   // boards-------------------------------------------------
   const addBoard = async (title: string, bg: string) => {
     try {
-      const docRef = await addDoc(collection(db, 'boards'), { title, slug: title, bg });
-      setDataBoard([...dataBoard, { id: docRef.id, title, slug: title, bg }]);
+      const user = auth.currentUser;
+      const docRef = await addDoc(collection(db, 'boards'), { title, slug: title, bg, userId: user ? user.uid : null, createdAt: serverTimestamp() });
+      
+      setDataBoard([...dataBoard, { id: docRef.id, title, slug: title, bg, userId: user ? user.uid : null }]);
     } catch (error) {
       console.error('Error adding board:', error);
     }
-  };
-
+  }
+  
   const deleteBoard = async (id: string) => {
     try {
       await deleteDoc(doc(db, 'boards', id));
@@ -143,7 +226,7 @@ const App: React.FC = () => {
   // columns--------------------------------------------------------------
   const addColumn = async (title: string, boardId: string | null) => {
     try {
-      const docRef = await addDoc(collection(db, 'columns'), { title, boardId });
+      const docRef = await addDoc(collection(db, 'columns'), { title, boardId, createdAt: serverTimestamp() });
       setDataColumn([...dataColumn, { id: docRef.id, title, boardId }]);
     } catch (error) {
       console.error('Error adding column:', error);
@@ -156,7 +239,6 @@ const App: React.FC = () => {
       const tasksToDelete = dataTask.filter(task => task.colId === id);
       const timersToDelete = dataTimer.filter(timer => timer.colId === id);
 
-     
       // Delete related tasks
       for (const task of tasksToDelete) {
         await deleteDoc(doc(db, 'tasks', task.id));
@@ -200,7 +282,6 @@ const App: React.FC = () => {
         await updateDoc(doc(db, 'tasks', task.id), { colId: task.colId });
       }
       setDataTask(tasks);
-      
     } catch (error) {
       console.error('Error updating task order:', error);
     }
@@ -303,7 +384,6 @@ const App: React.FC = () => {
     }
   };
   
-  
   return (
    <div className={` transition-all duration-300 min-h-screen ${darkMode ? 'text-white bg-[#1d2125]' : 'text-gray-600 bg-[#ffffff85]'}`}>
    <div className='hidden from-red-900 via-red-600 from-green-900 via-green-600 from-blue-900
@@ -319,8 +399,9 @@ const App: React.FC = () => {
 
    </div>
       <Routes>
-        <Route path='/' element={<Boards updateBoard={updateBoard}  setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-        <Route path=':slug' element={<ShowBoard updateTaskOrder={updateTaskOrder} updateTaskHasTimer={updateTaskHasTimer } deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+          <Route path='/' element={<Boards updateBoard={updateBoard} handleSignOut={handleSignOut} user={user} setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
+          <Route path=':slug' element={<ShowBoard updateTaskOrder={updateTaskOrder} user={user}  handleSignOut={handleSignOut} updateTaskHasTimer={updateTaskHasTimer } deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+          <Route path='/auth' element={<Auth darkMode={darkMode} setDarkMode={setDarkMode} onAuthSuccess={fetchData}></Auth>}></Route>
       </Routes>
    </div>
   )

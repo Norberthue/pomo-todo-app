@@ -28,9 +28,11 @@ interface ShowBoardProps  {
     updateFixedTime: (id:string, newBreakTime:number, newPomoTime:number) => void;
     updateTaskHasTimer:(id: string, updatedHasTimer: boolean) => void;
     updateTaskOrder: (task: Task[]) => void;
+    user: any;
+    handleSignOut: () => void
 }
 
-const ShowBoard = ({dataBoard, dataColumn, dataTimer, updateTaskOrder, updateTaskHasTimer, updateFixedTime, addTimer, pauseStartTaskTimer, setDataTask, addColumn, updateTaskTimer, updateTaskDescription, toggleCompleteTask, updateColumn, deleteColumn, addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
+const ShowBoard = ({dataBoard, dataColumn, dataTimer, user, handleSignOut, updateTaskOrder, updateTaskHasTimer, updateFixedTime, addTimer, pauseStartTaskTimer, setDataTask, addColumn, updateTaskTimer, updateTaskDescription, toggleCompleteTask, updateColumn, deleteColumn, addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
     const {slug} = useParams()
     const [board, setBoard] = useState<Board | null>(null)
     const color = board?.bg 
@@ -48,7 +50,7 @@ const ShowBoard = ({dataBoard, dataColumn, dataTimer, updateTaskOrder, updateTas
     return (
     <div className={`flex flex-col min-h-screen gap-5  transition-colors duration-500 bg-gradient-to-b  ${darkMode ? `from-20% from-${color}-900   via-${color}-800   to-${color}-500`
     : `  from-20% from-${color}-500   via-${color}-400    to-${color}-300`}  `}> 
-       <Header darkMode={darkMode} setDarkMode={setDarkMode}></Header>
+       <Header handleSignOut={handleSignOut} darkMode={darkMode} setDarkMode={setDarkMode} user={user}></Header>
         <div className=' flex gap-5 mt-5 ml-8 text-xl items-center text-white'>
         <ul className='list-disc   ml-5'>
             <li className="text-white font-semibold ">{board?.title}</li>

@@ -3,6 +3,7 @@ export interface Board {
     title: string;
     slug: string;
     bg: string
+    userId:string | null
 }
 
 export interface Column {

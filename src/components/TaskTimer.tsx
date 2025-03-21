@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react'
 import { Task, Timer } from '../Types'
-
+//import ticker from './ticker.js'
 interface TaskTimerProps {
   task: Task
   updateTaskTimer:(id:string, minutes:number, seconds:number) => void;
@@ -20,7 +20,7 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
   const [isActive, setIsActive] = useState(true);
   const [lastTime, setLastTime] = useState(Date.now());
   const [time, setTime] = useState(timer.seconds);
-  console.log(time)
+  const date = Date.now()
   
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -51,22 +51,16 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
   // update minutes and seconds and change it to break and pomo
   useEffect(() => {
     if (!isActive) return;
-    
-    
-    setTime(1);
-   
+    const elapsed = Math.floor((performance.now()  - date) / 1000);
+    const totalSeconds = timer.seconds - elapsed;
+    const newMinutes = Math.floor(totalSeconds / 60);
+    const newSeconds = totalSeconds % 60;
     
     let interval = setInterval(() => {
       if (timer.isOn) {
         if (timer.seconds <= 0) {
           if (timer.minutes !== 0) {
-            const newSeconds = timer.seconds - time;
-            if (newSeconds < 0) {
-              const newMinutes = timer.minutes - 1;
-              updateTaskTimer(timer.id, newMinutes, 59 + newSeconds);
-            } else {
-              updateTaskTimer(timer.id, timer.minutes, newSeconds);
-            }
+              updateTaskTimer(timer.id, timer.minutes -1, 59)
           } else {
             if (breakTime) {
               updateTaskTimer(timer.id, timer.fixedPomodoroTime, 2);
@@ -77,8 +71,8 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
             }
         }
         } else {
-          updateTaskTimer(timer.id, timer.minutes, (timer.seconds - time) );
-          
+          updateTaskTimer(timer.id, timer.minutes, timer.seconds -1 );
+         
         }
     }
     
