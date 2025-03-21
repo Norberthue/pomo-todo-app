@@ -4,7 +4,7 @@ import  { Board, Column, Task, Timer } from  './Types'
 import { Routes, Route } from 'react-router-dom'
 import ShowBoard from './components/ShowBoard'
 import { db,auth } from './FirebaseConfig'; // Import your Firebase configuration
-import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc, getDoc, writeBatch, orderBy, query, serverTimestamp, where } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc,orderBy, query, serverTimestamp, where } from 'firebase/firestore';
 import Auth from './components/Auth';
 import { signOut } from 'firebase/auth';
 

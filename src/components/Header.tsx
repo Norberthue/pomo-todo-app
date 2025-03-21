@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { Board } from '../Types'
 import { useState } from 'react';
 interface HeaderForms {
     darkMode: boolean

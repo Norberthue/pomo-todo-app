@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { signUp, login } from "../AuthService";
 import { Link } from "react-router-dom";
-import Header from "./Header";
 interface AuthForms {
     darkMode: boolean
     setDarkMode: (darkmode: boolean) => void

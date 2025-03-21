@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Column } from '../Types'
 import { motion } from 'framer-motion'
-import { v4 as uuid } from 'uuid'
 
 interface AddNewTaskButtonForms {
     addTask: (title: string, columnId: string, boardId: string | null) => void;
