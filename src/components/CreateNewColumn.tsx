@@ -20,9 +20,6 @@ const CreateNewColumn = ({addColumn, darkMode, board}: CreateNewColumnForms) => 
         }
     }
 
-
-    
-
     return (
         <div className={`ml-2 self-baseline flex-none p-2 order-last w-[300px] rounded-lg transition-all duration-500  ${openCreateColumn ? '' : darkMode ? 'hover:bg-[#434647]' : 'hover:bg-[#c9cbcc]'} duration-150 ${darkMode ? 'bg-[#34383b]' : 'bg-gray-200'}`}>
             <button onClick={() => {setOpenCreateColumn(true)}} className={`${openCreateColumn ? 'hidden' : 'block'} w-full h-full flex`}>+ Add new column</button>

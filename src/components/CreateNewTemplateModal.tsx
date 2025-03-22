@@ -1,4 +1,5 @@
 import React from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 
 interface CreateNewTemplateModalForms {
     setOpenCreateBoard: (open: boolean) => void;
@@ -13,9 +14,16 @@ interface CreateNewTemplateModalForms {
 
 const CreateNewTemplateModal = ({setOpenCreateBoard, setBackground, background, openCreateBoard, darkMode , handleSubmit, boardTitle ,setBoardTitle}: CreateNewTemplateModalForms) => {
   return (
-    <div onClick={() => {setOpenCreateBoard(false)}} className={`${openCreateBoard ? 'fixed': 'hidden'} z-10 top-0 left-0 w-screen h-full bg-[#0000000e]`}>
-        <div onClick={e => {e.stopPropagation()}} className={`absolute content-shadow  ${darkMode ? 'text-white bg-[#1d2125]  ' : 'text-gray-500 border-gray-200 bg-gray-50'}
-             left-1/2 xl:left-[550px] 2xl:left-[800px] -translate-x-1/2  flex flex-col gap-10 p-4 rounded-lg top-30  max-h-[600px] h-[400px] max-w-[300px] w-full`}>
+    <div 
+    onClick={() => {setOpenCreateBoard(false)}} className={`${openCreateBoard ? 'fixed  z-10': 'hidden  z-0'} top-0 left-0 w-screen h-full bg-[#0000000e]`}>
+        <motion.div 
+        initial={{  y: -400 }}
+        animate={{  y: 60 }}
+        exit={{ y: -400 }}
+        transition={{ duration: 0.8, ease: "easeInOut", type:'spring'}}
+       
+        onClick={e => {e.stopPropagation()}} className={`absolute content-shadow  ${darkMode ? 'text-white bg-[#1d2125]  ' : 'text-gray-500 border-gray-200 bg-gray-50'}
+             left-1/2 xl:left-[550px] 2xl:left-[800px] -translate-x-1/2 flex flex-col gap-10 p-4 rounded-lg max-h-[600px] h-[400px] max-w-[300px] w-full`}>
             <div className=" flex  items-center ">
                 <div className="flex flex-1 justify-center">
                     <h1 className="text-lg">Create template</h1>
@@ -52,7 +60,8 @@ const CreateNewTemplateModal = ({setOpenCreateBoard, setBackground, background, 
                         Start template
                 </button>
             </form>  
-        </div>
+        </motion.div>
+        
     </div>
   )
 }

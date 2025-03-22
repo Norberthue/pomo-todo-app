@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Column, Task, Timer } from '../Types'
 import DropArea from './DropArea';
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import ModalTasks from './ModalTasks';
 
 interface TasksForms {
@@ -96,7 +96,9 @@ const Tasks = ({darkMode, dataTask, dataTimer, updateTaskHasTimer, deleteTask, u
                                 </form>
                             )}
                     </motion.div>
-                    {isTaskOpen && <ModalTasks updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} dataTask={dataTask} getTask={getTask} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode}  setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
+                    <AnimatePresence>
+                        {isTaskOpen && <ModalTasks updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} dataTask={dataTask} getTask={getTask} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode}  setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
+                    </AnimatePresence>
                 </div>
             )
             

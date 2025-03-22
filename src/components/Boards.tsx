@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Board } from '../Types'
 import { Link } from 'react-router-dom'
 import  CreateNewTemplateModal from "./CreateNewTemplateModal";
+import { AnimatePresence } from "framer-motion";
 
 
 
@@ -97,8 +98,10 @@ const Boards = ({ addBoard, dataBoard, handleSignOut, user, darkMode, deleteBoar
             ${darkMode ? 'text-white bg-[#292d31] hover:bg-[#2e3336] ' : 'text-gray-500  hover:bg-gray-200 bg-gray-100'} 
             font-semibold cursor-pointer   flex items-center justify-center`}>
                 <h1 onClick={() => {setOpenCreateBoard(true)}} className="w-full h-full flex items-center justify-center">Create new Template</h1>
-                <CreateNewTemplateModal background={background} setBackground={setBackground} setOpenCreateBoard={setOpenCreateBoard} openCreateBoard={openCreateBoard} 
-                darkMode={darkMode} handleSubmit={handleSubmit} boardTitle={boardTitle} setBoardTitle={setBoardTitle}/>
+                <AnimatePresence >
+                  {openCreateBoard && <CreateNewTemplateModal background={background} setBackground={setBackground} setOpenCreateBoard={setOpenCreateBoard} openCreateBoard={openCreateBoard} 
+                  darkMode={darkMode} handleSubmit={handleSubmit} boardTitle={boardTitle} setBoardTitle={setBoardTitle}/>}
+                </AnimatePresence>
             </div>
 
             {dataBoard.filter(val => {return val.title.includes(search)}).map((data) => {

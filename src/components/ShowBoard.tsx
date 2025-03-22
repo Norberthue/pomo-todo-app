@@ -56,7 +56,7 @@ const ShowBoard = ({dataBoard, dataColumn, dataTimer, user, handleSignOut, updat
             <li className="text-white font-semibold ">{board?.title}</li>
         </ul>
         </div>
-        <div className='flex gap-3 ml-5  overflow-x-auto scrollbar  '>
+        <div className='flex gap-1 ml-5  overflow-x-auto scrollbar  '>
             <CreateNewColumn board={board} addColumn={addColumn} darkMode={darkMode}/>
             <Columns updateTaskOrder={updateTaskOrder} updateTaskHasTimer={updateTaskHasTimer} dataTimer={dataTimer} pauseStartTaskTimer={pauseStartTaskTimer}   updateFixedTime={updateFixedTime} addTimer={ addTimer} updateTaskTimer={updateTaskTimer}
                 updateTaskDescription={updateTaskDescription} setDataTask={setDataTask} board={board} deleteColumn={deleteColumn} updateTask={updateTask}
