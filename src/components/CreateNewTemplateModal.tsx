@@ -1,5 +1,5 @@
 import React from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 interface CreateNewTemplateModalForms {
     setOpenCreateBoard: (open: boolean) => void;

@@ -39,7 +39,7 @@ const ModalTasks = ({updateTaskTimer, getTask, dataTimer, addTimer, updateTaskHa
     <div onClick={() => {setIsTaskOpen(false)}} className={` fixed z-20 top-0 left-0 w-screen h-full bg-[#00000050] `}>
         <motion.div
         initial={{top:-900}}
-        animate={{top:1/2 }}
+        animate={{top:1/2}}
         exit={{top:-900}}
         transition={{duration:0.7 , ease:'easeInOut', type:'spring'}}
         onClick={e => {e.stopPropagation()}} className={`fixed left-1/2 -translate-x-1/2 translate-y-1/8
