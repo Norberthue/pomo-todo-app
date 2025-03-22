@@ -12,21 +12,19 @@ export default function Auth({ onAuthSuccess, darkMode, setDarkMode } : AuthForm
     const [password, setPassword] = useState('');
     const [isSignUp, setIsSignUp] = useState(false);
     const [error, setError] = useState('');
-    const [successLink, setSuccessLink] = useState('/auth')
     const handleAuth = async () => {
         try {
-            setSuccessLink('/')
             if (isSignUp) {
                 await signUp(email, password);
+                window.location.href ='/'
                 
             } else {
                 await login(email, password);
-                setSuccessLink('/')
+                window.location.href ='/'
             }
             onAuthSuccess();
         } catch (err) {
             setError("Authentication failed. Check your credentials.");
-            setSuccessLink('/auth')
         }
     }
 
@@ -57,12 +55,9 @@ export default function Auth({ onAuthSuccess, darkMode, setDarkMode } : AuthForm
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 />
-                <Link to={successLink}>
-                    <button onClick={handleAuth} className="bg-blue-500 text-white p-2 w-full cursor-pointer">
-                    {isSignUp ? "Sign Up" : "Login"}
-                    </button>
-                </Link>
-                
+                <button onClick={handleAuth} className="bg-blue-500 text-white p-2 w-full cursor-pointer">
+                {isSignUp ? "Sign Up" : "Login"}
+                </button>
                 <p
                 className="text-sm text-blue-500 cursor-pointer mt-2"
                 onClick={() => setIsSignUp(!isSignUp)}
