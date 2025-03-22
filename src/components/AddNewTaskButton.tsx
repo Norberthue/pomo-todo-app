@@ -8,7 +8,6 @@ interface AddNewTaskButtonForms {
     column: Column;
 }
 
-
 const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) => {
     const [taskTitle, setTaskTitle] = useState('')
     const [editId, setEditId] = useState('')  
@@ -18,7 +17,6 @@ const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) =
         if (taskTitle.length > 0 ) {
             addTask(taskTitle, colId, boardId)
             setTaskTitle('')
-            
         }
     } 
 
@@ -30,8 +28,6 @@ const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) =
         }
     };
   
-   
-
     return (
     <div className={`bottom-0  pb-2 pt-1 mt-2 `}>
         {editId === column.id  ? 
@@ -42,16 +38,16 @@ const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) =
                             text-sm pt-2 pb-5 pl-2 focus:ring-2 focus:ring-blue-500 `}  value={taskTitle} onChange={(e) => {setTaskTitle(e.target.value)}} >
                     </textarea>
                     <div className='flex items-center gap-4'>
-                        <button  className={` p-2 rounded-sm 
+                        <button  className={` cursor-pointer p-2 rounded-sm 
                             ${darkMode === false ? 'bg-gray-200 text-black  hover:bg-[#c9cbcc] ' 
                             : 'bg-[#34383b] text-white hover:bg-[#434647] '} duration-200`} type="submit">
                                 + Add Task
                         </button>  
-                        <i onClick={() => {setEditId('')}} className="fa-solid fa-xmark hover:bg-gray-500 p-3 rounded-sm duration-150"></i>
+                        <i onClick={() => {setEditId('')}} className="cursor-pointer fa-solid fa-xmark hover:bg-gray-500 p-3 rounded-sm duration-150"></i>
                     </div>   
                 </motion.form> : 
                 <motion.button  layout  onClick={() => {setEditId(column.id)}} 
-                    className={`${darkMode ? 'hover:bg-[#2f3131]' : 'hover:bg-gray-200'} 
+                    className={`cursor-pointer ${darkMode ? 'hover:bg-[#2f3131]' : 'hover:bg-gray-200'} 
                     pt-2 pb-2 rounded-lg pl-2 w-full h-full flex `}>
                     + Add new task
                 </motion.button>

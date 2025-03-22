@@ -72,9 +72,9 @@ const Boards = ({ addBoard, dataBoard, handleSignOut, user, darkMode, deleteBoar
               <div className=" relative flex flex-col gap-2 items-center">
                 <h1 onClick={() => {setOpenLogInOut(!openLogInOut)}} className={`${user ? 'block' : 'hidden'} rounded-xl p-2 ${darkMode ? 'hover:bg-[#424344]' : 'hover:bg-[#ececec]'} duration-500 cursor-pointer`}>{user ? user.email : ''}</h1>
                 {user ? (
-                  <div className={`${darkMode ? 'bg-[#292a2c]' : 'bg-gray-200'} z-10 rounded-md pt-2 pb-2 pl-2 pr-2 flex flex-col gap-2 absolute right-0.5 ${openLogInOut ? 'top-10 opacity-100 pointer-events-auto ' : ' top-5 opacity-0 pointer-events-none'} duration-300`}>
-                    <Link to={'/'}><h1 onClick={handleSignOut} className={`  cursor-pointer`}>Logout</h1></Link> 
-                    <button className='cursor-pointer' onClick={() => {setDarkMode(!darkMode)}}>{darkMode ? 'Theme 🌞' : 'Theme 🌙'}</button>
+                  <div className={`${darkMode ? 'bg-[#292a2c]' : 'bg-gray-200'} z-10 rounded-md pt-2 pb-2 pl-2 pr-2 flex flex-col gap-2 absolute right-0.5 ${openLogInOut ? 'top-12 opacity-100 pointer-events-auto ' : ' top-5 opacity-0 pointer-events-none'} duration-300`}>
+                    <Link to={'/'}><h1 onClick={handleSignOut} className={` hover:underline underline-offset-4 duration-200  cursor-pointer`}>Logout</h1></Link> 
+                    <button className='cursor-pointer hover:underline underline-offset-4 duration-200' onClick={() => {setDarkMode(!darkMode)}}>{darkMode ? 'Theme 🌞' : 'Theme 🌙'}</button>
                   </div>
                   
                 ) : (

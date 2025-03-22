@@ -32,7 +32,6 @@ const Tasks = ({darkMode, dataTask, dataTimer, updateTaskHasTimer, deleteTask, u
         if (updatedTaskTitle.length >= 1) {
           updateTask(taskId, updatedTaskTitle)
           setTaskId('')
-    
         }
       }
     

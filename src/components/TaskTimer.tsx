@@ -17,40 +17,8 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
   const timer = dataTimer.filter((data) => data.taskId === task.id)[0]
   const [timerMinutes, setTimerMinutes] = useState<number>(timer.fixedPomodoroTime)
   const [timerBreaks, setTimerBreaks] = useState<number>(timer.fixedBreakTime)
-  // const [isActive, setIsActive] = useState(true);
-  // const [lastTime, setLastTime] = useState(Date.now());
-  // const [time, setTime] = useState(timer.seconds);
   
-  // useEffect(() => {
-  //   const handleVisibilityChange = () => {
-  //     if (document.hidden) {
-  //       setIsActive(false);
-  //       setLastTime(Date.now());
-  //     } else {
-  //       setIsActive(true);
-  //       setTime((prev) => {
-  //         const elapsed = Math.floor((Date.now() - lastTime) / 1000);
-  //         const totalSeconds = prev + elapsed;
-  //         const newMinutes = Math.floor(totalSeconds / 60);
-  //         const newSeconds = totalSeconds % 60;
-
-  //         if (newMinutes > 0) {
-  //           updateTaskTimer(timer.id, timer.minutes - newMinutes, newSeconds);
-  //         }
-
-  //         return newSeconds;
-  //       });
-  //     }
-  //   };
-
-  //   document.addEventListener("visibilitychange", handleVisibilityChange);
-  //   return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-  // }, [lastTime]);
-
-  // update minutes and seconds and change it to break and pomo
   useEffect(() => {
-    // if (!isActive) return;
-    
     let interval = setInterval(() => {
       if (timer.isOn) {
         if (timer.seconds <= 0) {

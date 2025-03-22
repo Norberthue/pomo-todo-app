@@ -20,7 +20,6 @@ const App: React.FC = () => {
   // console.log('col: ' + dataColumn)
   // console.log('task: ' + dataTask.map((task) => task.id))
   // console.log('timer: ' + dataTimer.map((task) => JSON.stringify(task)))
-
   //user authentication
   useEffect(() => {
     auth.onAuthStateChanged((currentUser) => {
