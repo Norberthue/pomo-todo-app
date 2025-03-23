@@ -346,8 +346,8 @@ const App: React.FC = () => {
   // timer---------------------------------------------------------------
   const addTimer = async (taskId: string, boardId: string, colId: string) => {
     try {
-      const docRef = await addDoc(collection(db, 'timers'), { taskId, boardId, colId, minutes: 0, seconds: 11, isOn: false, fixedBreakTime: 5, fixedPomodoroTime: 25});
-      setDataTimer([...dataTimer, { id: docRef.id, taskId, boardId, colId, minutes: 0, seconds: 11, isOn: false, fixedBreakTime: 5, fixedPomodoroTime: 25 }]);
+      const docRef = await addDoc(collection(db, 'timers'), { taskId, boardId, colId, minutes: 25, seconds: 0, isOn: false, fixedBreakTime: 5, fixedPomodoroTime: 25});
+      setDataTimer([...dataTimer, { id: docRef.id, taskId, boardId, colId, minutes: 25, seconds: 0, isOn: false, fixedBreakTime: 5, fixedPomodoroTime: 25 }]);
     } catch (error) {
       console.error('Error adding timer:', error);
     }
