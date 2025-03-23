@@ -1,6 +1,7 @@
-
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Task, Timer } from '../Types'
+import beep from '../assets/Audio/beep.wav'
+import expolde from '../assets/Audio/explode.wav'
 //import ticker from './ticker.js'
 interface TaskTimerProps {
   task: Task
@@ -17,33 +18,55 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
   const timer = dataTimer.filter((data) => data.taskId === task.id)[0]
   const [timerMinutes, setTimerMinutes] = useState<number>(timer.fixedPomodoroTime)
   const [timerBreaks, setTimerBreaks] = useState<number>(timer.fixedBreakTime)
-  
-  useEffect(() => {
-    let interval = setInterval(() => {
-      if (timer.isOn) {
-        if (timer.seconds <= 0) {
-          if (timer.minutes !== 0) {
-              updateTaskTimer(timer.id, timer.minutes -1, 59)
-          } else {
-            if (breakTime) {
-              updateTaskTimer(timer.id, timer.fixedPomodoroTime, 2);
-              setBreakTime(false);
-            } else {
-                updateTaskTimer(timer.id, timer.fixedBreakTime, 2)
-                setBreakTime(true)
-            }
-        }
-        } else {
-          updateTaskTimer(timer.id, timer.minutes, timer.seconds -1 );
-         
-        }
-    }
-    
-    },1000)
+  const workerRef = useRef<Worker | null>(null);
+  const audioBeep = useRef(new Audio(beep)).current;
+  const audioExplode = new Audio(expolde)
+  audioExplode.volume = 0.2
+  audioBeep.volume = 0.2
 
-    return () => clearInterval(interval)
-    
-  },[timer.isOn, timer.seconds, timer.id, updateTaskTimer, pauseStartTaskTimer, breakTime ])
+
+  useEffect(() => {
+    workerRef.current = new Worker(new URL('../ticker.js', import.meta.url));
+    workerRef.current.onmessage = (e) => {
+      const { timerId, elapsedTime } = e.data;
+      if (timerId === timer.id && timer.isOn) {
+        let totalSeconds = timer.minutes * 60 + timer.seconds - elapsedTime;
+        if (totalSeconds <= 0) {
+          if (breakTime) {
+            updateTaskTimer(timer.id, timer.fixedPomodoroTime, 0);
+            setBreakTime(false);
+            audioExplode.play()
+          } else {
+            updateTaskTimer(timer.id, timer.fixedBreakTime, 0);
+            setBreakTime(true);
+            audioExplode.play()
+          }
+        } else {
+         
+          const newMinutes = Math.floor(totalSeconds / 60);
+          const newSeconds = totalSeconds % 60;
+          updateTaskTimer(timer.id, newMinutes, newSeconds);
+
+          if (newSeconds <= 10 && newMinutes === 0 ) {
+            audioBeep.play()
+          }
+
+        }
+      }
+    };
+
+    return () => {
+      workerRef.current?.terminate();
+    };
+  }, [timer.id, timer.isOn, timer.minutes, timer.seconds, updateTaskTimer, breakTime]);
+
+  useEffect(() => {
+    if (timer.isOn) {
+      workerRef.current?.postMessage({ action: 'start', timerId: timer.id, duration: timer.minutes * 60 + timer.seconds });
+    } else {
+      workerRef.current?.postMessage({ action: 'stop' });
+    }
+  }, [timer.id, timer.isOn, timer.minutes, timer.seconds, updateTaskTimer, breakTime]);
 
   const pauseTimer = () => {
     pauseStartTaskTimer(timer.id)
