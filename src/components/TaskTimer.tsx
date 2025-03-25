@@ -42,7 +42,6 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
             audioExplode.play()
           }
         } else {
-         
           const newMinutes = Math.floor(totalSeconds / 60);
           const newSeconds = totalSeconds % 60;
           updateTaskTimer(timer.id, newMinutes, newSeconds);

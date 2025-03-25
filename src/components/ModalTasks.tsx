@@ -36,15 +36,15 @@ const ModalTasks = ({updateTaskTimer, getTask, dataTimer, addTimer, updateTaskHa
     }
     
     return (
-    <div onClick={() => {setIsTaskOpen(false)}} className={` fixed z-20 top-0 left-0 w-screen h-full bg-[#00000050] `}>
+    <div onClick={() => {setIsTaskOpen(false)}} className={` fixed z-20 top-0 left-0 w-screen h-full bg-[#00000050]`}>
         <motion.div
         initial={{top:-900}}
         animate={{top:1/2}}
         exit={{top:-900}}
         transition={{duration:0.7 , ease:'easeInOut', type:'spring'}}
-        onClick={e => {e.stopPropagation()}} className={`fixed left-1/2 -translate-x-1/2 translate-y-1/8
-             ${darkMode ? 'bg-[#242222]' : 'bg-[#e4e4e4]'} max-w-[500px] w-full min-h-[600px] rounded-lg p-4  flex flex-col gap-4`}>
-                <div className="flex items-center gap-2 justify-between">
+        onClick={e => {e.stopPropagation()}} className={`fixed left-1/2 -translate-x-1/2 translate-y-1/8 max-h-[80vh] overflow-y-auto scrollbar2
+             ${darkMode ? 'bg-[#242222]' : 'bg-[#e4e4e4]'} max-w-[500px] w-full min-h-[600px] rounded-lg p-4  flex flex-col gap-4 `}>
+                <div className="flex items-center gap-2 justify-between ">
                     <div className="flex items-center gap-2">
                         <i onClick={() => toggleCompleteTask(task.id)} className={` ${task.completed ? ' cursor-pointer fa-circle-check fa-solid text-green-600' : ' cursor-pointer fa-circle fa-regular'} duration-500`}></i> 
                         <h1 className={`text-2xl duration-500 ${task.completed ? 'text-gray-400 line-through' : ''}`}>{task.title}</h1>

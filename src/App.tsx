@@ -51,21 +51,21 @@ const App: React.FC = () => {
             const timersToDelete = timerSnapshot.docs
               .map(doc => ({ id: doc.id, ...doc.data() }))
               .filter(timer => boardsWithoutUserId.some(board => board.id === (timer as Timer).boardId));
-
-            for (const col of columnsToDelete) {
-              await deleteDoc(doc(db, 'columns', col.id));
-            }
-
-            for (const task of tasksToDelete) {
-              await deleteDoc(doc(db, 'tasks', task.id));
-            }
-
-            for (const timer of timersToDelete) {
-              await deleteDoc(doc(db, 'timers', timer.id));
-            }
-            for (const board of boardsWithoutUserId) {
-              await deleteDoc(doc(db, 'boards', board.id));
-            }
+              
+              for (const col of columnsToDelete) {
+                await deleteDoc(doc(db, 'columns', col.id));
+              }
+              
+              for (const task of tasksToDelete) {
+                await deleteDoc(doc(db, 'tasks', task.id));
+              }
+              
+              for (const timer of timersToDelete) {
+                await deleteDoc(doc(db, 'timers', timer.id));
+              }
+              for (const board of boardsWithoutUserId) {
+                await deleteDoc(doc(db, 'boards', board.id));
+              }
           } catch (error) {
             console.error('Error deleting boards without userId:', error);
           }
