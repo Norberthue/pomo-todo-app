@@ -31,6 +31,7 @@ export interface Timer {
     seconds: number;
     isOn: boolean;
     fixedPomodoroTime:number;
-    fixedBreakTime:number
+    fixedBreakTime:number;
+    breakTime: boolean
 }
 

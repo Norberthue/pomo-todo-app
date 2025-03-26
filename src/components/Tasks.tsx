@@ -12,15 +12,16 @@ interface TasksForms {
     deleteTask: (id:string) => void;
     toggleCompleteTask: (id:string) => void;
     updateTaskDescription:(id:string, newDescription:string) => void;
-    updateTaskTimer:(id:string, minutes:number, seconds:number) => void;
+    updateTaskTimer:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
     dataTimer: Timer[];
     pauseStartTaskTimer: (id:string) => void;
     updateFixedTime: (id:string, newBreakTime:number, newPomoTime:number) => void;
     addTimer: (taskId:string, boardId:string, colId:string) => void;
     updateTaskHasTimer:(id: string, updatedHasTimer: boolean) => void;
+    updateTaskTimerFirebase:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
 }
 
-const Tasks = ({darkMode, dataTask, dataTimer, updateTaskHasTimer, deleteTask, updateFixedTime, addTimer, pauseStartTaskTimer, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
+const Tasks = ({darkMode, dataTask, dataTimer, updateTaskHasTimer, updateTaskTimerFirebase, deleteTask, updateFixedTime, addTimer, pauseStartTaskTimer, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
     const [updatedTaskTitle, setUpdatedTaskTitle] = useState('')
     const [taskId, setTaskId] = useState('')  
     const textareaRef = useRef<HTMLTextAreaElement | null>(null)
@@ -96,7 +97,7 @@ const Tasks = ({darkMode, dataTask, dataTimer, updateTaskHasTimer, deleteTask, u
                             )}
                     </motion.div>
                     <AnimatePresence>
-                        {isTaskOpen && <ModalTasks updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} dataTask={dataTask} getTask={getTask} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode}  setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
+                        {isTaskOpen && <ModalTasks updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} dataTask={dataTask} getTask={getTask} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode}  setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
                     </AnimatePresence>
                 </div>
             )

@@ -5,20 +5,22 @@ import expolde from '../assets/Audio/explode.wav'
 //import ticker from './ticker.js'
 interface TaskTimerProps {
   task: Task
-  updateTaskTimer:(id:string, minutes:number, seconds:number) => void;
+  updateTaskTimer:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
   dataTimer: Timer[];
   pauseStartTaskTimer: (id:string) => void;
   darkMode: boolean;
   updateFixedTime: (id:string, newBreakTime:number, newPomoTime:number) => void;
+  updateTaskTimerFirebase:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
 }
 
-const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer ,pauseStartTaskTimer}: TaskTimerProps) => {
+const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimerFirebase, updateTaskTimer ,pauseStartTaskTimer}: TaskTimerProps) => {
   const [breakTime, setBreakTime] = useState(false)
   const [isSettingsOn, setIsSettingsOn] = useState(false)
   const timer = dataTimer.filter((data) => data.taskId === task.id)[0]
   const [timerMinutes, setTimerMinutes] = useState<number>(timer.fixedPomodoroTime)
   const [timerBreaks, setTimerBreaks] = useState<number>(timer.fixedBreakTime)
   const workerRef = useRef<Worker | null>(null);
+  
   const audioBeep = useRef(new Audio(beep)).current;
   const audioExplode = new Audio(expolde)
   audioExplode.volume = 0.2
@@ -32,19 +34,17 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
       if (timerId === timer.id && timer.isOn) {
         let totalSeconds = timer.minutes * 60 + timer.seconds - elapsedTime;
         if (totalSeconds <= 0) {
-          if (breakTime) {
-            updateTaskTimer(timer.id, timer.fixedPomodoroTime, 0);
-            setBreakTime(false);
+          if (timer.breakTime) {
+            updateTaskTimer(timer.id, timer.fixedPomodoroTime, 0, false);
             audioExplode.play()
           } else {
-            updateTaskTimer(timer.id, timer.fixedBreakTime, 0);
-            setBreakTime(true);
+            updateTaskTimer(timer.id, timer.fixedBreakTime, 0, true);
             audioExplode.play()
           }
         } else {
           const newMinutes = Math.floor(totalSeconds / 60);
           const newSeconds = totalSeconds % 60;
-          updateTaskTimer(timer.id, newMinutes, newSeconds);
+          updateTaskTimer(timer.id, newMinutes, newSeconds, timer.breakTime);
 
           if (newSeconds <= 10 && newMinutes === 0 ) {
             audioBeep.play()
@@ -57,7 +57,11 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
     return () => {
       workerRef.current?.terminate();
     };
-  }, [timer.id, timer.isOn, timer.minutes, timer.seconds, updateTaskTimer, breakTime]);
+  }, [timer.id, timer.isOn, timer.minutes, timer.seconds, updateTaskTimer, timer.breakTime]);
+
+  useEffect(() => {
+    updateTaskTimerFirebase(timer.id, timer.minutes, timer.seconds, timer.breakTime)
+  },[])
 
   useEffect(() => {
     if (timer.isOn) {
@@ -65,7 +69,7 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
     } else {
       workerRef.current?.postMessage({ action: 'stop' });
     }
-  }, [timer.id, timer.isOn, timer.minutes, timer.seconds, updateTaskTimer, breakTime]);
+  }, [timer.id, timer.isOn, timer.minutes, timer.seconds, updateTaskTimer,timer.breakTime]);
 
   const pauseTimer = () => {
     pauseStartTaskTimer(timer.id)
@@ -77,15 +81,17 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
 
   //update pomo after change
   useEffect(() => {
-    if (timer.fixedPomodoroTime !== timerMinutes && !breakTime) {
-      updateTaskTimer(timer.id, timer.fixedPomodoroTime, 0)
+    if (timer.fixedPomodoroTime !== timerMinutes && !timer.breakTime) {
+      updateTaskTimer(timer.id, timer.fixedPomodoroTime, 0, timer.breakTime)
+      updateTaskTimerFirebase(timer.id, timer.fixedPomodoroTime, 0, timer.breakTime)
     }
     }, [timer.fixedPomodoroTime]);
   
   //update break after change
   useEffect(() => {
-    if (timer.fixedBreakTime !== timerMinutes && breakTime) {
-      updateTaskTimer(timer.id, timer.fixedBreakTime, 0)
+    if (timer.fixedBreakTime !== timerMinutes && timer.breakTime) {
+      updateTaskTimer(timer.id, timer.fixedBreakTime, 0, timer.breakTime)
+      updateTaskTimerFirebase(timer.id, timer.fixedBreakTime, 0, timer.breakTime)
     }
     }, [timer.fixedBreakTime]);
 
@@ -117,7 +123,7 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
     <div className='flex flex-col items-center gap-5'>
       <div className='flex items-center gap-20'>
         <div>
-          <h1 className='text-3xl w-[130px]'>{breakTime ? 'Break' : 'Pomodoro'}</h1>
+          <h1 className='text-3xl w-[130px]'>{timer.breakTime ? 'Break' : 'Pomodoro'}</h1>
         </div>
         <div className='relative'>
           <i onClick={() => setIsSettingsOn(!isSettingsOn)} className="fa-solid text-xl hover:-rotate-120 duration-500 fa-gear cursor-pointer"></i>
@@ -139,7 +145,7 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
         <h1 className='text-8xl '>{minutes}:{seconds}</h1>
       </div>
       <div className='flex gap-5 items-center'>
-        <button onClick={() => updateTaskTimer(timer.id, breakTime ? timer.fixedBreakTime : timer.fixedPomodoroTime, 0)} className={`cursor-pointer hover:-rotate-360 text-2xl pt-2 pb-2 pr-4 pl-4  rounded-lg hover:scale-90
+        <button onClick={() => updateTaskTimer(timer.id, timer.breakTime ? timer.fixedBreakTime : timer.fixedPomodoroTime, 0, timer.breakTime)} className={`cursor-pointer hover:-rotate-360 text-2xl pt-2 pb-2 pr-4 pl-4  rounded-lg hover:scale-90
             duration-500 `}>
           <i className="fa-solid fa-arrow-rotate-left"></i>
         </button>
@@ -147,7 +153,7 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimer 
            ${darkMode ? ' bg-[#1b1c1d]' : 'bg-[#c0c0c0]'} duration-500 `}>
             {timer.isOn ? 'Pause' : 'Start'}
         </button>
-        <button onClick={() => updateTaskTimer(timer.id, 0, 1)} className={`cursor-pointer text-2xl pt-2 pb-2 pr-4 pl-4  rounded-lg hover:scale-90
+        <button onClick={() => updateTaskTimer(timer.id, 0, 1, timer.breakTime)} className={`cursor-pointer text-2xl pt-2 pb-2 pr-4 pl-4  rounded-lg hover:scale-90
             duration-500 `}>
           <i className="fa-solid fa-forward"></i>
         </button>

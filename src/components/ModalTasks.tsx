@@ -10,16 +10,17 @@ interface ModalTaskForms {
     darkMode: boolean;
     updateTaskDescription:(id:string, newDescription:string) => void;
     toggleCompleteTask: (id:string) => void;
-    updateTaskTimer:(id:string, minutes:number, seconds:number) => void;
+    updateTaskTimer:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
     getTask: string;
     dataTimer: Timer[];
     pauseStartTaskTimer: (id:string) => void;
     updateFixedTime: (id:string, newBreakTime:number, newPomoTime:number) => void;
     addTimer: (taskId:string, boardId:string, colId:string) => void;
     updateTaskHasTimer:(id: string, updatedHasTimer: boolean) => void;
+    updateTaskTimerFirebase:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
 }   
 
-const ModalTasks = ({updateTaskTimer, getTask, dataTimer, addTimer, updateTaskHasTimer, updateFixedTime, pauseStartTaskTimer, dataTask, toggleCompleteTask, updateTaskDescription, setIsTaskOpen , darkMode}: ModalTaskForms) => {
+const ModalTasks = ({updateTaskTimer, getTask, dataTimer, addTimer, updateTaskTimerFirebase, updateTaskHasTimer, updateFixedTime, pauseStartTaskTimer, dataTask, toggleCompleteTask, updateTaskDescription, setIsTaskOpen , darkMode}: ModalTaskForms) => {
     
     const findTask = dataTask.filter((task) => task.id === getTask)
 
@@ -66,7 +67,7 @@ const ModalTasks = ({updateTaskTimer, getTask, dataTimer, addTimer, updateTaskHa
                 </div>
                 <div className="flex items-center justify-center">
                     {task.hasTimer ? 
-                    (<TaskTimer updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} darkMode={darkMode} updateTaskTimer={updateTaskTimer} task={task}></TaskTimer>) 
+                    (<TaskTimer updateFixedTime={updateFixedTime} updateTaskTimerFirebase={updateTaskTimerFirebase} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} darkMode={darkMode} updateTaskTimer={updateTaskTimer} task={task}></TaskTimer>) 
                     : 
                     (<button onClick={() => handleCreateTimer()} className={` p-2 rounded-sm duration-300 cursor-pointer ${darkMode === false ? 'bg-gray-300 text-black  hover:bg-[#c9cbcc] ' 
                             : 'bg-[#34383b] text-white hover:bg-[#434647] '}`}>Create Timer</button>)}

@@ -149,6 +149,7 @@ const App: React.FC = () => {
             fixedBreakTime: data.fixedBreakTime || 5,
             fixedPomodoroTime: data.fixedPomodoroTime || 25,
             userId: data.userId,
+            breakTime: false
           };
         })
         .filter(timer => tasks.some(task => task.id === timer.taskId));
@@ -346,17 +347,21 @@ const App: React.FC = () => {
   // timer---------------------------------------------------------------
   const addTimer = async (taskId: string, boardId: string, colId: string) => {
     try {
-      const docRef = await addDoc(collection(db, 'timers'), { taskId, boardId, colId, minutes: 25, seconds: 0, isOn: false, fixedBreakTime: 5, fixedPomodoroTime: 25});
-      setDataTimer([...dataTimer, { id: docRef.id, taskId, boardId, colId, minutes: 25, seconds: 0, isOn: false, fixedBreakTime: 5, fixedPomodoroTime: 25 }]);
+      const docRef = await addDoc(collection(db, 'timers'), { taskId, boardId, colId, minutes: 25, seconds: 0, isOn: false, fixedBreakTime: 5, fixedPomodoroTime: 25, breakTime: false});
+      setDataTimer([...dataTimer, { id: docRef.id, taskId, boardId, colId, minutes: 25, seconds: 0, isOn: false, fixedBreakTime: 5, fixedPomodoroTime: 25, breakTime: false, }]);
     } catch (error) {
       console.error('Error adding timer:', error);
     }
   };
 
-  const updateTaskTimer = async (id: string, newMinutes: number, newSeconds: number) => {
+  const updateTaskTimer = (id: string, newMinutes: number, newSeconds: number, newBreakTime: boolean) => {
+    setDataTimer(dataTimer.map(data => (data.id === id ? { ...data, minutes: newMinutes, seconds: newSeconds, breakTime: newBreakTime } : data)));
+  };
+
+  const updateTaskTimerFirebase = async (id: string, newMinutes: number, newSeconds: number, newBreakTime: boolean) => {
     try {
-      await updateDoc(doc(db, 'timers', id), { minutes: newMinutes, seconds: newSeconds });
-      setDataTimer(dataTimer.map(data => (data.id === id ? { ...data, minutes: newMinutes, seconds: newSeconds } : data)));
+        await updateDoc(doc(db, 'timers', id), { minutes: newMinutes, seconds: newSeconds, breakTime: newBreakTime });
+        setDataTimer(dataTimer.map(data => (data.id === id ? { ...data, minutes: newMinutes, seconds: newSeconds, breakTime: newBreakTime  } : data))); 
     } catch (error) {
       console.error('Error updating timer:', error);
     }
@@ -399,7 +404,7 @@ const App: React.FC = () => {
    </div>
       <Routes>
           <Route path='/' element={<Boards updateBoard={updateBoard} handleSignOut={handleSignOut} user={user} setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-          <Route path=':slug' element={<ShowBoard updateTaskOrder={updateTaskOrder} user={user}  handleSignOut={handleSignOut} updateTaskHasTimer={updateTaskHasTimer } deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+          <Route path=':slug' element={<ShowBoard updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskOrder={updateTaskOrder} user={user}  handleSignOut={handleSignOut} updateTaskHasTimer={updateTaskHasTimer } deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
           <Route path='/auth' element={<Auth darkMode={darkMode} setDarkMode={setDarkMode} onAuthSuccess={fetchData}></Auth>}></Route>
       </Routes>
    </div>
