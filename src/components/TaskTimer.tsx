@@ -14,7 +14,6 @@ interface TaskTimerProps {
 }
 
 const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimerFirebase, updateTaskTimer ,pauseStartTaskTimer}: TaskTimerProps) => {
-  const [breakTime, setBreakTime] = useState(false)
   const [isSettingsOn, setIsSettingsOn] = useState(false)
   const timer = dataTimer.filter((data) => data.taskId === task.id)[0]
   const [timerMinutes, setTimerMinutes] = useState<number>(timer.fixedPomodoroTime)
