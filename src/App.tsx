@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Boards from './components/Boards'
 import  { Board, Column, Task, Timer } from  './Types'
 import { Routes, Route } from 'react-router-dom'
@@ -9,13 +9,33 @@ import Auth from './components/Auth';
 import { signOut } from 'firebase/auth';
 
 const App: React.FC = () => {
-  const [dataBoard, setDataBoard] = useState<Board[]>([])
-  const [dataColumn, setDataColumn] = useState<Column[]>([])
-  const [dataTask, setDataTask] = useState<Task[]>([])
-  const [dataTimer, setDataTimer] = useState<Timer[]>([])
-  const [darkMode, setDarkMode] = useState(false)
+  const [dataBoard, setDataBoard] = useState<Board[]>([]);
+  const [dataColumn, setDataColumn] = useState<Column[]>([]);
+  const [dataTask, setDataTask] = useState<Task[]>([]);
+  const [dataTimer, setDataTimer] = useState<Timer[]>([]);
+  const [darkMode, setDarkMode] = useState(false);
   const [user, setUser] = useState(auth.currentUser);
-  
+
+  // Cache for authenticated user
+  const userCacheRef = useRef(auth.currentUser);
+
+  // Cache for fetched data
+  const cacheRef = useRef({
+    boards: null as Board[] | null,
+    columns: null as Column[] | null,
+    tasks: null as Task[] | null,
+    timers: null as Timer[] | null,
+  });
+
+  // Debounce function for limiting writes
+  const debounce = (func: (...args: any[]) => void, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
+
   // console.log('board: ' + dataBoard)
   // console.log('col: ' + dataColumn)
   // console.log('task: ' + dataTask.map((task) => task.id))
@@ -24,6 +44,7 @@ const App: React.FC = () => {
   useEffect(() => {
     auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
+      userCacheRef.current = currentUser; // Cache the authenticated user
       if (currentUser) {
         fetchData();
       } else {
@@ -86,15 +107,23 @@ const App: React.FC = () => {
 
 //fetch all data from firebase
   const fetchData = async () => {
-    const user = auth.currentUser;
-    if (!user) return [];
-    
+    const cachedUser = userCacheRef.current; // Use cached user
+    if (!cachedUser) return;
+
+    if (cacheRef.current.boards && cacheRef.current.columns && cacheRef.current.tasks && cacheRef.current.timers) {
+      setDataBoard(cacheRef.current.boards);
+      setDataColumn(cacheRef.current.columns);
+      setDataTask(cacheRef.current.tasks);
+      setDataTimer(cacheRef.current.timers);
+      return;
+    }
+
     const boardCollection = collection(db, 'boards');
     const columsCollection = collection(db, 'columns')
     
     try {
       //get boards data and filter it by user id
-      const q_boards =  query(boardCollection, where('userId', '==', user.uid), orderBy('createdAt', 'asc'));
+      const q_boards =  query(boardCollection, where('userId', '==', cachedUser.uid), orderBy('createdAt', 'asc'));
       const boardSnapshot = await getDocs(q_boards);
       const boards = boardSnapshot.docs
         .map(doc => {
@@ -154,6 +183,12 @@ const App: React.FC = () => {
         })
         .filter(timer => tasks.some(task => task.id === timer.taskId));
       setDataTimer(timers);
+
+      // Cache the fetched data
+      cacheRef.current.boards = boards;
+      cacheRef.current.columns = columns;
+      cacheRef.current.tasks = tasks;
+      cacheRef.current.timers = timers;
 
     } catch (error) {
       console.error('Error fetching data from Firebase:', error);
@@ -276,7 +311,7 @@ const App: React.FC = () => {
     }
   };
 
-  const updateTaskOrder = async (tasks: Task[]) => {
+  const debouncedUpdateTaskOrder = debounce(async (tasks: Task[]) => {
     try {
       for (const task of tasks) {
         await updateDoc(doc(db, 'tasks', task.id), { colId: task.colId });
@@ -285,6 +320,10 @@ const App: React.FC = () => {
     } catch (error) {
       console.error('Error updating task order:', error);
     }
+  }, 500);
+
+  const updateTaskOrder = (tasks: Task[]) => {
+    debouncedUpdateTaskOrder(tasks);
   };
 
   const deleteTask = async (id: string) => {
@@ -358,13 +397,17 @@ const App: React.FC = () => {
     setDataTimer(dataTimer.map(data => (data.id === id ? { ...data, minutes: newMinutes, seconds: newSeconds, breakTime: newBreakTime } : data)));
   };
 
-  const updateTaskTimerFirebase = async (id: string, newMinutes: number, newSeconds: number, newBreakTime: boolean) => {
+  const debouncedUpdateTaskTimerFirebase = debounce(async (id: string, newMinutes: number, newSeconds: number, newBreakTime: boolean) => {
     try {
         await updateDoc(doc(db, 'timers', id), { minutes: newMinutes, seconds: newSeconds, breakTime: newBreakTime });
         setDataTimer(dataTimer.map(data => (data.id === id ? { ...data, minutes: newMinutes, seconds: newSeconds, breakTime: newBreakTime  } : data))); 
     } catch (error) {
       console.error('Error updating timer:', error);
     }
+  }, 500);
+
+  const updateTaskTimerFirebase = (id: string, newMinutes: number, newSeconds: number, newBreakTime: boolean) => {
+    debouncedUpdateTaskTimerFirebase(id, newMinutes, newSeconds, newBreakTime);
   };
 
   const updateFixedTime = async (id: string, newPomoTime: number, newBreakTime: number) => {
