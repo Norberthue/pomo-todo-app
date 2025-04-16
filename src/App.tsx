@@ -404,8 +404,8 @@ const App: React.FC = () => {
     from-lime-500 via-lime-400 from-cyan-500 via-cyan-400 from-slate-500 via-slate-400 to-red-300 to-green-300
     to-blue-300 to-orange-300 to-yellow-300 to-purple-300 to-pink-300 to-lime-300 to-cyan-300 to-slate-300
 
-    bg-purple-400/80 bg-red-400/80 bg-green-400/80 bg-blue-400/80 bg-orange-400/80 bg-yellow-400/80 bg-pink-400/80 bg-lime-400/80 bg-cyan-400/80
-    bg-slate-400/80
+    hover:bg-purple-400/80 hover:bg-red-400/80 hover:bg-green-400/80 hover:bg-blue-400/80 hover:bg-orange-400/80 hover:bg-yellow-400/80 hover:bg-pink-400/80 hover:bg-lime-400/80 hover:bg-cyan-400/80
+    hover:bg-slate-400/80
     '>
 
    </div>
