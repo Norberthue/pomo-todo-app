@@ -13,7 +13,7 @@ const App: React.FC = () => {
   const [dataColumn, setDataColumn] = useState<Column[]>([]);
   const [dataTask, setDataTask] = useState<Task[]>([]);
   const [dataTimer, setDataTimer] = useState<Timer[]>([]);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const [user, setUser] = useState(auth.currentUser);
 
   // Cache for authenticated user
@@ -52,46 +52,6 @@ const App: React.FC = () => {
         setDataColumn([]);
         setDataBoard([]);
         setDataTimer([]);
-        //delete boards which doesnt have user id
-        const deleteBoardsWithoutUserId = async () => {
-          try {
-            const boardSnapshot = await getDocs(collection(db, 'boards'));
-            const boardsWithoutUserId = boardSnapshot.docs.filter(doc => !doc.data().userId);
-            const columnSnapshot = await getDocs(collection(db, 'columns'));
-            const taskSnapshot = await getDocs(collection(db, 'tasks'));
-            const timerSnapshot = await getDocs(collection(db, 'timers'));
-
-            const columnsToDelete = columnSnapshot.docs
-              .map(doc => ({ ...doc.data(), id: doc.id } as Column))
-              .filter(col => boardsWithoutUserId.some(board => board.id === col.boardId));
-
-            const tasksToDelete = taskSnapshot.docs
-              .map(doc => ({ id: doc.id, ...doc.data() }))
-              .filter(task => boardsWithoutUserId.some(board => board.id === (task as Task).boardId));
-
-            const timersToDelete = timerSnapshot.docs
-              .map(doc => ({ id: doc.id, ...doc.data() }))
-              .filter(timer => boardsWithoutUserId.some(board => board.id === (timer as Timer).boardId));
-              
-              for (const col of columnsToDelete) {
-                await deleteDoc(doc(db, 'columns', col.id));
-              }
-              
-              for (const task of tasksToDelete) {
-                await deleteDoc(doc(db, 'tasks', task.id));
-              }
-              
-              for (const timer of timersToDelete) {
-                await deleteDoc(doc(db, 'timers', timer.id));
-              }
-              for (const board of boardsWithoutUserId) {
-                await deleteDoc(doc(db, 'boards', board.id));
-              }
-          } catch (error) {
-            console.error('Error deleting boards without userId:', error);
-          }
-        };
-        deleteBoardsWithoutUserId();
       }
     });
   }, []);
@@ -197,7 +157,7 @@ const App: React.FC = () => {
 
   // dark/light mode-------------------------------------------------
   useEffect(() => {
-    const mode = JSON.parse(localStorage.getItem('mode') || 'false');
+    const mode = JSON.parse(localStorage.getItem('mode') || 'true');
     setDarkMode(mode);
     
   }, []);
@@ -210,9 +170,10 @@ const App: React.FC = () => {
   const addBoard = async (title: string, bg: string) => {
     try {
       const user = auth.currentUser;
-      const docRef = await addDoc(collection(db, 'boards'), { title, slug: title, bg, userId: user ? user.uid : null, createdAt: serverTimestamp() });
-      
-      setDataBoard([...dataBoard, { id: docRef.id, title, slug: title, bg, userId: user ? user.uid : null }]);
+      if (user) {
+        const docRef = await addDoc(collection(db, 'boards'), { title, slug: title, bg, userId: user ? user.uid : null, createdAt: serverTimestamp() });
+        setDataBoard([...dataBoard, { id: docRef.id, title, slug: title, bg, userId: user ? user.uid : null }]);
+      }      
     } catch (error) {
       console.error('Error adding board:', error);
     }
@@ -442,6 +403,9 @@ const App: React.FC = () => {
     via-blue-400 from-orange-500 via-orange-400 from-yellow-500 via-yellow-400 from-purple-500 via-purple-400 from-pink-500 via-pink-400
     from-lime-500 via-lime-400 from-cyan-500 via-cyan-400 from-slate-500 via-slate-400 to-red-300 to-green-300
     to-blue-300 to-orange-300 to-yellow-300 to-purple-300 to-pink-300 to-lime-300 to-cyan-300 to-slate-300
+
+    bg-purple-400/80 bg-red-400/80 bg-green-400/80 bg-blue-400/80 bg-orange-400/80 bg-yellow-400/80 bg-pink-400/80 bg-lime-400/80 bg-cyan-400/80
+    bg-slate-400/80
     '>
 
    </div>
