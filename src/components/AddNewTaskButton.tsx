@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Column } from '../Types'
 import { motion } from 'framer-motion'
+import * as linkify from 'linkifyjs';
 
 interface AddNewTaskButtonForms {
     addTask: (title: string, columnId: string, boardId: string | null) => void;
@@ -12,10 +13,17 @@ const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) =
     const [taskTitle, setTaskTitle] = useState('')
     const [editId, setEditId] = useState('')  
     
-    const handleTaskSubmit = (e: React.FormEvent , colId: string , boardId: string | null) => {
+    const handleTaskSubmit = (e: React.FormEvent, colId: string, boardId: string | null) => {
         e.preventDefault()
-        if (taskTitle.length > 0 ) {
-            addTask(taskTitle, colId, boardId)
+        if (taskTitle.length > 0) {
+            // Detect and convert links using linkifyjs
+            const formattedTitle = linkify.find(taskTitle).length > 0
+                ? linkify.find(taskTitle).reduce((acc, link) => {
+                    return acc.replace(link.value, `<a href="${link.href}" class="text-blue-500 hover:text-blue-600 underline duration-200" target="_blank">${link.value}</a>`)
+                }, taskTitle)
+                : taskTitle
+
+            addTask(formattedTitle, colId, boardId)
             setTaskTitle('')
         }
     } 

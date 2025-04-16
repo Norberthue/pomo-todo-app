@@ -3,6 +3,8 @@ import { Column, Task, Timer } from '../Types'
 import DropArea from './DropArea';
 import { AnimatePresence, motion } from "framer-motion";
 import ModalTasks from './ModalTasks';
+import linkifyHtml from 'linkify-html';
+import * as linkify from 'linkifyjs';
 
 interface TasksForms {
     dataTask: Task[];
@@ -21,6 +23,13 @@ interface TasksForms {
     updateTaskTimerFirebase:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
 }
 
+// Utility function to strip HTML tags
+const stripHtmlTags = (html: string): string => {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent || div.innerText || '';
+};
+
 const Tasks = ({darkMode, dataTask, dataTimer, updateTaskHasTimer, updateTaskTimerFirebase, deleteTask, updateFixedTime, addTimer, pauseStartTaskTimer, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
     const [updatedTaskTitle, setUpdatedTaskTitle] = useState('')
     const [taskId, setTaskId] = useState('')  
@@ -31,7 +40,12 @@ const Tasks = ({darkMode, dataTask, dataTimer, updateTaskHasTimer, updateTaskTim
     const handleChangeTaskName = (e: React.FormEvent | KeyboardEvent) => {
         e.preventDefault()
         if (updatedTaskTitle.length >= 1) {
-          updateTask(taskId, updatedTaskTitle)
+        const formattedTitle = linkify.find(updatedTaskTitle).length > 0
+                    ? linkify.find(updatedTaskTitle).reduce((acc, link) => {
+                        return acc.replace(link.value, `<a href="${link.href}" class="text-blue-500 hover:text-blue-600 underline duration-200" target="_blank">${link.value}</a>`)
+                    }, updatedTaskTitle)
+                    : updatedTaskTitle
+          updateTask(taskId, formattedTitle)
           setTaskId('')
         }
       }
@@ -57,14 +71,13 @@ const Tasks = ({darkMode, dataTask, dataTimer, updateTaskHasTimer, updateTaskTim
         e.dataTransfer.setData("cardId", card.id);
       };
 
-
     return (
     <div>
         {dataTask.length >= 1 && dataTask.map((task) => (
             task.colId === column.id && (
                 <div key={task.id}>
                     <DropArea darkMode={darkMode} beforeId={task.id} column={column.id}></DropArea>
-                    <motion.div  layout='preserve-aspect' layoutId={task.id} 
+                    <motion.div layout='preserve-aspect' layoutId={task.id} 
                       draggable onDragStart={(e) => handleDragStart(e, task)} className={`group  ${darkMode ? 'text-[#f8f8f8ee] bg-[#1d2125] hover:bg-[#2e3336] ' : 
                         'text-gray-600  hover:bg-gray-200 bg-white'} 
                         pt-2 pb-2  rounded-lg content-shadow`} key={task.id}>
@@ -75,14 +88,14 @@ const Tasks = ({darkMode, dataTask, dataTimer, updateTaskHasTimer, updateTaskTim
                                          absolute top-1 opacity-0 group-hover:opacity-100 left-0 group-hover:left-2 duration-500`}></i> 
                                         <div onClick={() => {setIsTaskOpen(true), setGetTask(task.id)}} className={`${task.completed ? 'text-gray-400 line-through' : ''}  
                                         hover:font-extrabold cursor-pointer pt-1 pl-2 group-hover:pl-7 
-                                        group-hover:overflow-hidden break-words font-semibold max-w-[230px] text-sm duration-500`}>
-                                            {task.title}
+                                        group-hover:overflow-hidden break-words font-semibold max-w-[230px] text-sm duration-500`}
+                                        dangerouslySetInnerHTML={{ __html: linkifyHtml(task.title)}}>
                                         </div>
                                     </div>
                                     
                                     <div className='flex gap-2 opacity-0  group-hover:right-1 absolute right-0 group-hover:opacity-100 duration-500 pr-2'>
                                         <button className='hover:scale-90 duration-200 cursor-pointer text-sm' onClick={() => {deleteTask(task.id)}}><i className="fa-solid fa-trash"></i></button>
-                                        <button className='hover:scale-90 duration-200 cursor-pointer text-sm' onClick={() => {setTaskId(task.id), setUpdatedTaskTitle(task.title)}}><i className="fa-solid fa-pen-to-square"></i></button>
+                                        <button className='hover:scale-90 duration-200 cursor-pointer text-sm' onClick={() => {setTaskId(task.id), setUpdatedTaskTitle(stripHtmlTags(task.title))}}><i className="fa-solid fa-pen-to-square"></i></button>
                                     </div>
                                 </div>
                                 ) : ( 

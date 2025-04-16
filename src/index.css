@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-
-
 html {
     font-family: "Roboto", serif;
 }
@@ -9,15 +7,16 @@ html {
 .bg-blur1{
     background-color: rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(35px);
-   
 }
 
 .bg-blur2{
     background-color: rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(45px);
-   
 }
 
+.bg-blur3 {
+  backdrop-filter: blur(5px);
+}
 
 .content-shadow {
     box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2)

@@ -3,7 +3,7 @@ import { Task, Timer } from "../Types"
 import Notes from "./Notes";
 import TaskTimer from "./TaskTimer";
 import { motion } from 'framer-motion'
-
+import linkifyHtml from 'linkify-html';
 interface ModalTaskForms {
     dataTask: Task[];
     setIsTaskOpen: (open:boolean) => void;
@@ -37,7 +37,7 @@ const ModalTasks = ({updateTaskTimer, getTask, dataTimer, addTimer, updateTaskTi
     }
     
     return (
-    <div onClick={() => {setIsTaskOpen(false)}} className={` fixed z-20 top-0 left-0 w-screen h-full bg-[#00000050]`}>
+    <div onClick={() => {setIsTaskOpen(false)}} className={` fixed z-20 top-0 left-0 w-screen h-full bg-blur3`}>
         <motion.div
         initial={{top:-900}}
         animate={{top:1/2}}
@@ -48,7 +48,7 @@ const ModalTasks = ({updateTaskTimer, getTask, dataTimer, addTimer, updateTaskTi
                 <div className="flex items-center gap-2 justify-between ">
                     <div className="flex items-center gap-2">
                         <i onClick={() => toggleCompleteTask(task.id)} className={` ${task.completed ? ' cursor-pointer fa-circle-check fa-solid text-green-600' : ' cursor-pointer fa-circle fa-regular'} duration-500`}></i> 
-                        <h1 className={`text-2xl duration-500 ${task.completed ? 'text-gray-400 line-through' : ''}`}>{task.title}</h1>
+                        <h1 className={`text-2xl duration-500 max-w-[400px] line-clamp-2 ${task.completed ? 'text-gray-400 line-through' : ''}`}  dangerouslySetInnerHTML={{ __html: linkifyHtml(task.title)}}></h1>
                     </div>
                     <div>
                         <i onClick={() => {setIsTaskOpen(false)}} className={`cursor-pointer fa-solid fa-xmark  ${darkMode ? 'hover:bg-[#1b1c1d]' : 'hover:bg-gray-400'}   p-3 rounded-full duration-150`}></i>

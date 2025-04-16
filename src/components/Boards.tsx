@@ -62,10 +62,10 @@ const Boards = ({ addBoard, dataBoard, handleSignOut, user, darkMode, deleteBoar
             font-semibold cursor-pointer   flex items-center justify-center`}>
               {user ? <h1 onClick={() => {setOpenCreateBoard(true)}} className="w-full h-full flex items-center justify-center">Create new Template</h1> : 
               <Link className="w-full h-full flex flex-col items-center justify-center" to={'/auth'}>
-                  <span>
-                   Log in to create
+                  <span className="">
+                   Login to create
                   </span>
-                  <span>New Template</span>    
+                  <span className="">new template</span>    
               </Link> }
               
                 <AnimatePresence >
