@@ -276,8 +276,7 @@ const App: React.FC = () => {
     try {
       for (const task of tasks) {
         await updateDoc(doc(db, 'tasks', task.id), { colId: task.colId });
-      }
-      setDataTask(tasks);
+      } 
     } catch (error) {
       console.error('Error updating task order:', error);
     }
