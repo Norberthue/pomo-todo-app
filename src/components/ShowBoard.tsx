@@ -31,9 +31,10 @@ interface ShowBoardProps  {
     user: any;
     handleSignOut: () => void
     updateTaskTimerFirebase:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
+    updateBoardPomoCounter: (id:string, newCounter:number, newMinutes: number) => void;
 }
 
-const ShowBoard = ({dataBoard, dataColumn, dataTimer, user, updateTaskTimerFirebase, handleSignOut, updateTaskOrder, updateTaskHasTimer, updateFixedTime, addTimer, pauseStartTaskTimer, setDataTask, addColumn, updateTaskTimer, updateTaskDescription, toggleCompleteTask, updateColumn, deleteColumn, addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
+const ShowBoard = ({ updateBoardPomoCounter, dataBoard, dataColumn, dataTimer, user, updateTaskTimerFirebase, handleSignOut, updateTaskOrder, updateTaskHasTimer, updateFixedTime, addTimer, pauseStartTaskTimer, setDataTask, addColumn, updateTaskTimer, updateTaskDescription, toggleCompleteTask, updateColumn, deleteColumn, addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
     const {slug} = useParams()
     const [board, setBoard] = useState<Board | null>(null)
     const color = board?.bg 
@@ -45,21 +46,24 @@ const ShowBoard = ({dataBoard, dataColumn, dataTimer, user, updateTaskTimerFireb
         } else {
             window.location.href = '/'
         }
-    },[slug])
+    },[slug, board?.timerCounter, dataBoard, board?.timerHours])
 
     
     return (
     <div className={`flex flex-col min-h-screen gap-5  transition-colors duration-500 bg-gradient-to-b  ${darkMode ? `from-20% from-${color}-900   via-${color}-800   to-${color}-500`
-    : `  from-20% from-${color}-500   via-${color}-400    to-${color}-300`}  `}> 
+    : `  from-20% from-${color}-500 via-${color}-400 to-${color}-300`}  `}> 
        <Header handleSignOut={handleSignOut} darkMode={darkMode} setDarkMode={setDarkMode} user={user}></Header>
         <div className=' flex gap-5 mt-5 ml-8 text-xl items-center text-white'>
-        <ul className='list-disc   ml-5'>
-            <li className="text-white font-semibold ">{board?.title}</li>
-        </ul>
+            <ul className='list-disc ml-5 flex gap-10'>
+                <li className="text-white font-semibold ">{board?.title}</li>
+                <li>Pomodoro Counter: {board?.timerCounter}</li>
+                <li>{board?.timerHours}h : {board?.timerMinutes}m</li>
+            </ul>
+           
         </div>
         <div className='flex gap-1 ml-5  overflow-x-auto scrollbar  '>
             <CreateNewColumn board={board} addColumn={addColumn} darkMode={darkMode}/>
-            <Columns updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskOrder={updateTaskOrder} updateTaskHasTimer={updateTaskHasTimer} dataTimer={dataTimer} pauseStartTaskTimer={pauseStartTaskTimer}   updateFixedTime={updateFixedTime} addTimer={ addTimer} updateTaskTimer={updateTaskTimer}
+            <Columns updateBoardPomoCounter={updateBoardPomoCounter} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskOrder={updateTaskOrder} updateTaskHasTimer={updateTaskHasTimer} dataTimer={dataTimer} pauseStartTaskTimer={pauseStartTaskTimer}   updateFixedTime={updateFixedTime} addTimer={ addTimer} updateTaskTimer={updateTaskTimer}
                 updateTaskDescription={updateTaskDescription} setDataTask={setDataTask} board={board} deleteColumn={deleteColumn} updateTask={updateTask}
                 toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
         </div>

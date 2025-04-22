@@ -1,19 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
-import { Task, Timer } from '../Types'
+import { Board, Task, Timer } from '../Types'
 import beep from '../assets/Audio/beep.wav'
 import expolde from '../assets/Audio/explode.wav'
 //import ticker from './ticker.js'
 interface TaskTimerProps {
   task: Task
+  board: Board;
   updateTaskTimer:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
   dataTimer: Timer[];
   pauseStartTaskTimer: (id:string) => void;
   darkMode: boolean;
   updateFixedTime: (id:string, newBreakTime:number, newPomoTime:number) => void;
   updateTaskTimerFirebase:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
+  updateBoardPomoCounter: (id:string, newCounter:number, newMinutes: number) => void;
 }
 
-const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimerFirebase, updateTaskTimer ,pauseStartTaskTimer}: TaskTimerProps) => {
+const TaskTimer = ({updateBoardPomoCounter, board ,darkMode, task, dataTimer, updateFixedTime, updateTaskTimerFirebase, updateTaskTimer ,pauseStartTaskTimer}: TaskTimerProps) => {
   const [isSettingsOn, setIsSettingsOn] = useState(false)
   const timer = dataTimer.filter((data) => data.taskId === task.id)[0]
   const [timerMinutes, setTimerMinutes] = useState<number>(timer.fixedPomodoroTime)
@@ -24,7 +26,7 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimerF
   const audioExplode = new Audio(expolde)
   audioExplode.volume = 0.2
   audioBeep.volume = 0.2
-
+  
 
   useEffect(() => {
     workerRef.current = new Worker(new URL('../ticker.js', import.meta.url));
@@ -38,6 +40,11 @@ const TaskTimer = ({darkMode, task, dataTimer, updateFixedTime, updateTaskTimerF
             audioExplode.play()
           } else {
             updateTaskTimer(timer.id, timer.fixedBreakTime, 0, true);
+            if (task.boardId) {
+              updateBoardPomoCounter(task.boardId, 1, timer.fixedPomodoroTime);
+            } else {
+              console.error("task.boardId is null");
+            }
             audioExplode.play()
           }
         } else {

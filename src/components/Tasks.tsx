@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Column, Task, Timer } from '../Types'
+import { Board, Column, Task, Timer } from '../Types'
 import DropArea from './DropArea';
 import { AnimatePresence, motion } from "framer-motion";
 import ModalTasks from './ModalTasks';
@@ -10,6 +10,7 @@ interface TasksForms {
     dataTask: Task[];
     darkMode: boolean;
     column: Column;
+    board: Board;
     updateTask: (id:string, newTitle:string) => void;
     deleteTask: (id:string) => void;
     toggleCompleteTask: (id:string) => void;
@@ -21,6 +22,7 @@ interface TasksForms {
     addTimer: (taskId:string, boardId:string, colId:string) => void;
     updateTaskHasTimer:(id: string, updatedHasTimer: boolean) => void;
     updateTaskTimerFirebase:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
+    updateBoardPomoCounter: (id:string, newCounter:number, newMinutes: number) => void;
 }
 
 // Utility function to strip HTML tags
@@ -30,7 +32,7 @@ const stripHtmlTags = (html: string): string => {
     return div.textContent || div.innerText || '';
 };
 
-const Tasks = ({darkMode, dataTask, dataTimer, updateTaskHasTimer, updateTaskTimerFirebase, deleteTask, updateFixedTime, addTimer, pauseStartTaskTimer, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
+const Tasks = ({updateBoardPomoCounter, board, darkMode, dataTask, dataTimer, updateTaskHasTimer, updateTaskTimerFirebase, deleteTask, updateFixedTime, addTimer, pauseStartTaskTimer, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
     const [updatedTaskTitle, setUpdatedTaskTitle] = useState('')
     const [taskId, setTaskId] = useState('')  
     const textareaRef = useRef<HTMLTextAreaElement | null>(null)
@@ -110,7 +112,7 @@ const Tasks = ({darkMode, dataTask, dataTimer, updateTaskHasTimer, updateTaskTim
                             )}
                     </motion.div>
                     <AnimatePresence>
-                        {isTaskOpen && <ModalTasks updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} dataTask={dataTask} getTask={getTask} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode}  setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
+                        {isTaskOpen && <ModalTasks updateBoardPomoCounter={updateBoardPomoCounter} board={board} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} dataTask={dataTask} getTask={getTask} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode}  setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
                     </AnimatePresence>
                 </div>
             )

@@ -88,7 +88,8 @@ const App: React.FC = () => {
       const boards = boardSnapshot.docs
         .map(doc => {
           const data = doc.data();
-          return { id: doc.id, title: data.title, slug: data.slug, bg: data.bg, userId: data.userId, createdAt:data.createdAt };
+          return { id: doc.id, title: data.title, slug: data.slug, bg: data.bg, userId: data.userId,
+             createdAt: data.createdAt, timerCounter: data.timerCounter, timerMinutes: data.timerMinutes, timerHours: data.timerHours};
         })
       setDataBoard(boards);
       
@@ -171,8 +172,8 @@ const App: React.FC = () => {
     try {
       const user = auth.currentUser;
       if (user) {
-        const docRef = await addDoc(collection(db, 'boards'), { title, slug: title, bg, userId: user ? user.uid : null, createdAt: serverTimestamp() });
-        setDataBoard([...dataBoard, { id: docRef.id, title, slug: title, bg, userId: user ? user.uid : null }]);
+        const docRef = await addDoc(collection(db, 'boards'), { title, slug: title, bg, userId: user ? user.uid : null, createdAt: serverTimestamp(), timerCounter: 0, timerHours: 0, timerMinutes: 0  });
+        setDataBoard([...dataBoard, {id: docRef.id, title, slug: title, bg, userId: user ? user.uid : null, timerCounter: 0, timerHours: 0, timerMinutes: 0}]);
       }      
     } catch (error) {
       console.error('Error adding board:', error);
@@ -218,6 +219,25 @@ const App: React.FC = () => {
       console.error('Error updating board:', error);
     }
   };
+
+  const updateBoardPomoCounter = async (id:string, newCount:number , newMinutes: number) => {
+    try {
+      const boardDoc = await getDocs(query(collection(db, 'boards'), where('__name__', '==', id)));
+      const boardData = boardDoc.docs[0]?.data();
+      const oldTimerMinutes = boardData?.timerMinutes || 0;
+      const oldTimerHours = boardData?.timerHours || 0;
+      const oldTimerCounter = boardData?.timerCounter || 0;
+      console.log('oldTimerCounter: ' + oldTimerCounter)
+      console.log('oldTimerMinutes: ' + oldTimerMinutes)
+      console.log('oldTimerHours: ' + oldTimerHours)
+      await updateDoc(doc(db, 'boards', id), {timerCounter: oldTimerCounter + newCount, timerMinutes: newMinutes + oldTimerMinutes >= 60 ? (newMinutes + oldTimerMinutes) - 60 : newMinutes + oldTimerMinutes ,
+         timerHours: newMinutes + oldTimerMinutes >= 60 ? oldTimerHours + 1 : oldTimerHours });
+      setDataBoard(dataBoard.map(data => (data.id === id ? { ...data, timerCounter: oldTimerCounter + newCount, timerMinutes: newMinutes + oldTimerMinutes >= 60 ? (newMinutes + oldTimerMinutes) - 60 :
+         newMinutes + oldTimerMinutes , timerHours: oldTimerMinutes + newMinutes >= 60 ? oldTimerHours + 1 : oldTimerHours } : data)));
+    } catch (error) {
+      console.log('Error while updating board pomo counter', error)
+    }
+  }
 
   // columns--------------------------------------------------------------
   const addColumn = async (title: string, boardId: string | null) => {
@@ -410,7 +430,7 @@ const App: React.FC = () => {
    </div>
       <Routes>
           <Route path='/' element={<Boards updateBoard={updateBoard} handleSignOut={handleSignOut} user={user} setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-          <Route path=':slug' element={<ShowBoard updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskOrder={updateTaskOrder} user={user}  handleSignOut={handleSignOut} updateTaskHasTimer={updateTaskHasTimer } deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+          <Route path=':slug' element={<ShowBoard updateBoardPomoCounter={updateBoardPomoCounter} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskOrder={updateTaskOrder} user={user}  handleSignOut={handleSignOut} updateTaskHasTimer={updateTaskHasTimer } deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
           <Route path='/auth' element={<Auth darkMode={darkMode} setDarkMode={setDarkMode} onAuthSuccess={fetchData}></Auth>}></Route>
       </Routes>
    </div>

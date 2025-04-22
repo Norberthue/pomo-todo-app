@@ -26,9 +26,10 @@ interface ColumnsForms {
     updateTaskHasTimer:(id: string, updatedHasTimer: boolean) => void;
     updateTaskOrder: (task: Task[]) => void;
     updateTaskTimerFirebase:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
+    updateBoardPomoCounter: (id:string, newCounter:number, newMinutes: number) => void;
 }
 
-const Columns = ({addTask ,dataTimer, updateTask, updateTaskOrder, updateTaskTimerFirebase, addTimer, updateTaskHasTimer, updateFixedTime, pauseStartTaskTimer, deleteTask, setDataTask, updateTaskTimer, updateTaskDescription, toggleCompleteTask, dataTask, dataColumn, board, deleteColumn,  updateColumn, darkMode}: ColumnsForms) => {
+const Columns = ({ updateBoardPomoCounter, addTask ,dataTimer, updateTask, updateTaskOrder, updateTaskTimerFirebase, addTimer, updateTaskHasTimer, updateFixedTime, pauseStartTaskTimer, deleteTask, setDataTask, updateTaskTimer, updateTaskDescription, toggleCompleteTask, dataTask, dataColumn, board, deleteColumn,  updateColumn, darkMode}: ColumnsForms) => {
     const [updatedColumnTitle, setUpdatedColumnTitle] = useState('')
     const [columnId, setColumnId] = useState('') 
     
@@ -74,8 +75,6 @@ const Columns = ({addTask ,dataTimer, updateTask, updateTaskOrder, updateTaskTim
 
             updateTaskOrder(copy);
             setDataTask(copy);
-
-           
         }
     };
     
@@ -164,7 +163,10 @@ const Columns = ({addTask ,dataTimer, updateTask, updateTaskOrder, updateTaskTim
                             <div onDrop={(e) => handleDragEnd(e,column.id)}
                                 onDragOver={(e) => handleDragOver(e,column.id)}
                                 onDragLeave={() => handleDragLeave(column.id)} className='flex flex-col mt-1 pl-2 pr-2 overflow-y-auto scrollbar2'>
-                                <Tasks updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} dataTask={dataTask} toggleCompleteTask={toggleCompleteTask} updateTask={updateTask} deleteTask={deleteTask} darkMode={darkMode} column={column}/>
+                                <Tasks updateBoardPomoCounter={updateBoardPomoCounter} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer}
+                                    updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer}
+                                    updateTaskDescription={updateTaskDescription} dataTask={dataTask} toggleCompleteTask={toggleCompleteTask} updateTask={updateTask}
+                                    deleteTask={deleteTask} darkMode={darkMode} column={column} board={board}/>
                                 <DropArea darkMode={darkMode} beforeId={null} column={column.id}></DropArea>
                                 <AddNewTaskButton  column={column}  darkMode={darkMode} addTask={addTask}/>
                             </div>

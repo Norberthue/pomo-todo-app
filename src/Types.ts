@@ -2,12 +2,15 @@ export interface Board {
     id: string;
     title: string;
     slug: string;
-    bg: string
-    userId:string | null
+    bg: string;
+    userId: string | null;
+    timerCounter: number;
+    timerMinutes: number;
+    timerHours: number;
 }
 
 export interface Column {
-    boardId: string | null
+    boardId: string | null;
     id: string;
     title: string;
 }
@@ -23,15 +26,15 @@ export interface Task {
 }
 
 export interface Timer {
-    id:string
-    boardId:string;
+    id: string;
+    boardId: string;
     colId: string;
     taskId: string;
     minutes: number;
     seconds: number;
     isOn: boolean;
-    fixedPomodoroTime:number;
-    fixedBreakTime:number;
-    breakTime: boolean
+    fixedPomodoroTime: number;
+    fixedBreakTime: number;
+    breakTime: boolean;
 }
 
