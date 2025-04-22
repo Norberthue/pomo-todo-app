@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Board, Column, Task, Timer } from '../Types'
+import {Column, Task, Timer } from '../Types'
 import DropArea from './DropArea';
 import { AnimatePresence, motion } from "framer-motion";
 import ModalTasks from './ModalTasks';
@@ -10,7 +10,6 @@ interface TasksForms {
     dataTask: Task[];
     darkMode: boolean;
     column: Column;
-    board: Board;
     updateTask: (id:string, newTitle:string) => void;
     deleteTask: (id:string) => void;
     toggleCompleteTask: (id:string) => void;
@@ -32,7 +31,7 @@ const stripHtmlTags = (html: string): string => {
     return div.textContent || div.innerText || '';
 };
 
-const Tasks = ({updateBoardPomoCounter, board, darkMode, dataTask, dataTimer, updateTaskHasTimer, updateTaskTimerFirebase, deleteTask, updateFixedTime, addTimer, pauseStartTaskTimer, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
+const Tasks = ({updateBoardPomoCounter, darkMode, dataTask, dataTimer, updateTaskHasTimer, updateTaskTimerFirebase, deleteTask, updateFixedTime, addTimer, pauseStartTaskTimer, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
     const [updatedTaskTitle, setUpdatedTaskTitle] = useState('')
     const [taskId, setTaskId] = useState('')  
     const textareaRef = useRef<HTMLTextAreaElement | null>(null)
@@ -112,7 +111,7 @@ const Tasks = ({updateBoardPomoCounter, board, darkMode, dataTask, dataTimer, up
                             )}
                     </motion.div>
                     <AnimatePresence>
-                        {isTaskOpen && <ModalTasks updateBoardPomoCounter={updateBoardPomoCounter} board={board} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} dataTask={dataTask} getTask={getTask} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode}  setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
+                        {isTaskOpen && <ModalTasks updateBoardPomoCounter={updateBoardPomoCounter} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} dataTask={dataTask} getTask={getTask} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode}  setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
                     </AnimatePresence>
                 </div>
             )

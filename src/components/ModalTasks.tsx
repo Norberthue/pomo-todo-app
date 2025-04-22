@@ -1,12 +1,11 @@
 
-import { Board, Task, Timer } from "../Types"
+import {Task, Timer } from "../Types"
 import Notes from "./Notes";
 import TaskTimer from "./TaskTimer";
 import { motion } from 'framer-motion'
 import linkifyHtml from 'linkify-html';
 interface ModalTaskForms {
     dataTask: Task[];
-    board: Board;
     setIsTaskOpen: (open:boolean) => void;
     darkMode: boolean;
     updateTaskDescription:(id:string, newDescription:string) => void;
@@ -22,7 +21,7 @@ interface ModalTaskForms {
     updateBoardPomoCounter: (id:string, newCounter:number, newMinutes: number) => void;
 }   
 
-const ModalTasks = ({updateBoardPomoCounter, board ,updateTaskTimer, getTask, dataTimer, addTimer, updateTaskTimerFirebase, updateTaskHasTimer, updateFixedTime, pauseStartTaskTimer, dataTask, toggleCompleteTask, updateTaskDescription, setIsTaskOpen , darkMode}: ModalTaskForms) => {
+const ModalTasks = ({updateBoardPomoCounter,updateTaskTimer, getTask, dataTimer, addTimer, updateTaskTimerFirebase, updateTaskHasTimer, updateFixedTime, pauseStartTaskTimer, dataTask, toggleCompleteTask, updateTaskDescription, setIsTaskOpen , darkMode}: ModalTaskForms) => {
     
     const findTask = dataTask.filter((task) => task.id === getTask)
 
@@ -69,7 +68,7 @@ const ModalTasks = ({updateBoardPomoCounter, board ,updateTaskTimer, getTask, da
                 </div>
                 <div className="flex items-center justify-center">
                     {task.hasTimer ? 
-                    (<TaskTimer updateBoardPomoCounter={updateBoardPomoCounter} board={board} updateFixedTime={updateFixedTime} updateTaskTimerFirebase={updateTaskTimerFirebase} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} darkMode={darkMode} updateTaskTimer={updateTaskTimer} task={task}></TaskTimer>) 
+                    (<TaskTimer updateBoardPomoCounter={updateBoardPomoCounter} updateFixedTime={updateFixedTime} updateTaskTimerFirebase={updateTaskTimerFirebase} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} darkMode={darkMode} updateTaskTimer={updateTaskTimer} task={task}></TaskTimer>) 
                     : 
                     (<button onClick={() => handleCreateTimer()} className={` p-2 rounded-sm duration-300 cursor-pointer ${darkMode === false ? 'bg-gray-300 text-black  hover:bg-[#c9cbcc] ' 
                             : 'bg-[#34383b] text-white hover:bg-[#434647] '}`}>Create Timer</button>)}

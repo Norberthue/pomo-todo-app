@@ -166,7 +166,7 @@ const Columns = ({ updateBoardPomoCounter, addTask ,dataTimer, updateTask, updat
                                 <Tasks updateBoardPomoCounter={updateBoardPomoCounter} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer}
                                     updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer}
                                     updateTaskDescription={updateTaskDescription} dataTask={dataTask} toggleCompleteTask={toggleCompleteTask} updateTask={updateTask}
-                                    deleteTask={deleteTask} darkMode={darkMode} column={column} board={board}/>
+                                    deleteTask={deleteTask} darkMode={darkMode} column={column} />
                                 <DropArea darkMode={darkMode} beforeId={null} column={column.id}></DropArea>
                                 <AddNewTaskButton  column={column}  darkMode={darkMode} addTask={addTask}/>
                             </div>
