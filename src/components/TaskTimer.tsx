@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import {Task, Timer } from '../Types'
 import beep from '../assets/Audio/beep.wav'
-import expolde from '../assets/Audio/explode.wav'
-//import ticker from './ticker.js'
+import expolde from '../assets/Audio/clock-alarm.mp3'
+
 interface TaskTimerProps {
   task: Task
   updateTaskTimer:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
@@ -22,8 +22,8 @@ const TaskTimer = ({updateBoardPomoCounter, darkMode, task, dataTimer, updateFix
   const workerRef = useRef<Worker | null>(null);
   
   const audioBeep = useRef(new Audio(beep)).current;
-  const audioExplode = new Audio(expolde)
-  audioExplode.volume = 0.2
+  const audioAlarm = new Audio(expolde)
+  audioAlarm.volume = 0.2
   audioBeep.volume = 0.2
 
 
@@ -36,7 +36,10 @@ const TaskTimer = ({updateBoardPomoCounter, darkMode, task, dataTimer, updateFix
         if (totalSeconds <= 0) {
           if (timer.breakTime) {
             updateTaskTimer(timer.id, timer.fixedPomodoroTime, 0, false);
-            audioExplode.play()
+            setTimeout(() => {
+              audioAlarm.pause()
+            },2000)
+            audioAlarm.play()
           } else {
             updateTaskTimer(timer.id, timer.fixedBreakTime, 0, true);
             if (task.boardId) {
@@ -44,7 +47,10 @@ const TaskTimer = ({updateBoardPomoCounter, darkMode, task, dataTimer, updateFix
             } else {
               console.error("task.boardId is null");
             }
-            audioExplode.play()
+            setTimeout(() => {
+              audioAlarm.pause()
+            },2000)
+            audioAlarm.play()
           }
         } else {
           const newMinutes = Math.floor(totalSeconds / 60);

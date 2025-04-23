@@ -32,9 +32,10 @@ interface ShowBoardProps  {
     handleSignOut: () => void
     updateTaskTimerFirebase:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
     updateBoardPomoCounter: (id:string, newCounter:number, newMinutes: number) => void;
+    resetPomodoroCounter: (id:string) => void;
 }
 
-const ShowBoard = ({ updateBoardPomoCounter, dataBoard, dataColumn, dataTimer, user, updateTaskTimerFirebase, handleSignOut, updateTaskOrder, updateTaskHasTimer, updateFixedTime, addTimer, pauseStartTaskTimer, setDataTask, addColumn, updateTaskTimer, updateTaskDescription, toggleCompleteTask, updateColumn, deleteColumn, addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
+const ShowBoard = ({resetPomodoroCounter, updateBoardPomoCounter, dataBoard, dataColumn, dataTimer, user, updateTaskTimerFirebase, handleSignOut, updateTaskOrder, updateTaskHasTimer, updateFixedTime, addTimer, pauseStartTaskTimer, setDataTask, addColumn, updateTaskTimer, updateTaskDescription, toggleCompleteTask, updateColumn, deleteColumn, addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
     const {slug} = useParams()
     const [board, setBoard] = useState<Board | null>(null)
     const color = board?.bg 
@@ -59,6 +60,10 @@ const ShowBoard = ({ updateBoardPomoCounter, dataBoard, dataColumn, dataTimer, u
                 <li>Pomodoro Counter: {board?.timerCounter}</li>
                 <li>{board?.timerHours}h : {board?.timerMinutes}m</li>
             </ul>
+            <button onClick={() => board?.id && resetPomodoroCounter(board.id)} className={`cursor-pointer hover:-rotate-360 text-2xl pt-2 pb-2 pr-4 pl-4  rounded-lg hover:scale-90
+                duration-500 `}>
+                <i className="fa-solid fa-arrow-rotate-left"></i>
+            </button>
            
         </div>
         <div className='flex gap-1 ml-5  overflow-x-auto scrollbar  '>

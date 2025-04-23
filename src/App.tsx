@@ -227,15 +227,21 @@ const App: React.FC = () => {
       const oldTimerMinutes = boardData?.timerMinutes || 0;
       const oldTimerHours = boardData?.timerHours || 0;
       const oldTimerCounter = boardData?.timerCounter || 0;
-      console.log('oldTimerCounter: ' + oldTimerCounter)
-      console.log('oldTimerMinutes: ' + oldTimerMinutes)
-      console.log('oldTimerHours: ' + oldTimerHours)
       await updateDoc(doc(db, 'boards', id), {timerCounter: oldTimerCounter + newCount, timerMinutes: newMinutes + oldTimerMinutes >= 60 ? (newMinutes + oldTimerMinutes) - 60 : newMinutes + oldTimerMinutes ,
          timerHours: newMinutes + oldTimerMinutes >= 60 ? oldTimerHours + 1 : oldTimerHours });
       setDataBoard(dataBoard.map(data => (data.id === id ? { ...data, timerCounter: oldTimerCounter + newCount, timerMinutes: newMinutes + oldTimerMinutes >= 60 ? (newMinutes + oldTimerMinutes) - 60 :
          newMinutes + oldTimerMinutes , timerHours: oldTimerMinutes + newMinutes >= 60 ? oldTimerHours + 1 : oldTimerHours } : data)));
     } catch (error) {
       console.log('Error while updating board pomo counter', error)
+    }
+  }
+
+  const resetPomodoroCounter = async (id:string) => {
+    try {
+      await updateDoc(doc(db, 'boards', id), {timerCounter: 0, timerHours: 0, timerMinutes: 0 })
+      setDataBoard(dataBoard.map((data) => data.id === id ? {...data, timerCounter: 0, timerHours: 0, timerMinutes: 0} : data))
+    } catch(error) {
+      console.log('Error while resetting pomodoro counter', error)
     }
   }
 
@@ -430,7 +436,7 @@ const App: React.FC = () => {
    </div>
       <Routes>
           <Route path='/' element={<Boards updateBoard={updateBoard} handleSignOut={handleSignOut} user={user} setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-          <Route path=':slug' element={<ShowBoard updateBoardPomoCounter={updateBoardPomoCounter} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskOrder={updateTaskOrder} user={user}  handleSignOut={handleSignOut} updateTaskHasTimer={updateTaskHasTimer } deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+          <Route path=':slug' element={<ShowBoard resetPomodoroCounter={resetPomodoroCounter} updateBoardPomoCounter={updateBoardPomoCounter} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskOrder={updateTaskOrder} user={user}  handleSignOut={handleSignOut} updateTaskHasTimer={updateTaskHasTimer } deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
           <Route path='/auth' element={<Auth darkMode={darkMode} setDarkMode={setDarkMode} onAuthSuccess={fetchData}></Auth>}></Route>
       </Routes>
    </div>
