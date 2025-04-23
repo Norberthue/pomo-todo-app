@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import Boards from './components/Boards'
 import  { Board, Column, Task, Timer } from  './Types'
 import { Routes, Route } from 'react-router-dom'
@@ -236,14 +236,18 @@ const App: React.FC = () => {
     }
   }
 
-  const resetPomodoroCounter = async (id:string) => {
-    try {
-      await updateDoc(doc(db, 'boards', id), {timerCounter: 0, timerHours: 0, timerMinutes: 0 })
-      setDataBoard(dataBoard.map((data) => data.id === id ? {...data, timerCounter: 0, timerHours: 0, timerMinutes: 0} : data))
-    } catch(error) {
-      console.log('Error while resetting pomodoro counter', error)
+  const resetPomodoroCounter = useCallback(async (id: string) => {
+    const board = dataBoard.find((data) => data.id === id);
+    if (board && board.timerCounter === 0 && board.timerHours === 0 && board.timerMinutes === 0) {
+      return;
     }
-  }
+    try {
+      await updateDoc(doc(db, 'boards', id), { timerCounter: 0, timerHours: 0, timerMinutes: 0 });
+      setDataBoard(dataBoard.map((data) => data.id === id ? { ...data, timerCounter: 0, timerHours: 0, timerMinutes: 0 } : data));
+    } catch (error) {
+      console.log('Error while resetting pomodoro counter', error);
+    }
+  }, [dataBoard, db]);
 
   // columns--------------------------------------------------------------
   const addColumn = async (title: string, boardId: string | null) => {

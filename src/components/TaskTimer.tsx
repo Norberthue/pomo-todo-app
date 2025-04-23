@@ -74,6 +74,7 @@ const TaskTimer = ({updateBoardPomoCounter, darkMode, task, dataTimer, updateFix
     updateTaskTimerFirebase(timer.id, timer.minutes, timer.seconds, timer.breakTime)
   },[])
 
+  //pause timer and start timer
   useEffect(() => {
     if (timer.isOn) {
       workerRef.current?.postMessage({ action: 'start', timerId: timer.id, duration: timer.minutes * 60 + timer.seconds });
@@ -92,7 +93,7 @@ const TaskTimer = ({updateBoardPomoCounter, darkMode, task, dataTimer, updateFix
 
   //update pomo after change
   useEffect(() => {
-    if (timer.fixedPomodoroTime !== timerMinutes && !timer.breakTime) {
+    if (timer.fixedPomodoroTime) {
       updateTaskTimer(timer.id, timer.fixedPomodoroTime, 0, timer.breakTime)
       updateTaskTimerFirebase(timer.id, timer.fixedPomodoroTime, 0, timer.breakTime)
     }
