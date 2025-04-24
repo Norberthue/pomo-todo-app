@@ -25,7 +25,7 @@ const Boards = ({ addBoard, dataBoard, handleSignOut, user, darkMode, deleteBoar
   const [search, setSearch] = useState('')
   const [updatedBoardTitle, setUpdatedBoardTitle] = useState('')
   const [templateId, setTemplateId] = useState('')
-  
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -68,10 +68,10 @@ const Boards = ({ addBoard, dataBoard, handleSignOut, user, darkMode, deleteBoar
                   <span className="">new template</span>    
               </Link> }
               
-                <AnimatePresence >
-                  {openCreateBoard && <CreateNewTemplateModal background={background} setBackground={setBackground} setOpenCreateBoard={setOpenCreateBoard} openCreateBoard={openCreateBoard} 
-                  darkMode={darkMode} handleSubmit={handleSubmit} boardTitle={boardTitle} setBoardTitle={setBoardTitle}/>}
-                </AnimatePresence>
+              <AnimatePresence>
+                {openCreateBoard && <CreateNewTemplateModal background={background} setBackground={setBackground} setOpenCreateBoard={setOpenCreateBoard} openCreateBoard={openCreateBoard} 
+                darkMode={darkMode} handleSubmit={handleSubmit} boardTitle={boardTitle} setBoardTitle={setBoardTitle}/>}
+              </AnimatePresence>
             </div>
 
             {dataBoard.filter(val => {return val.title.toLocaleLowerCase().includes(search.toLowerCase())}).map((data) => {

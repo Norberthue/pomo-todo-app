@@ -54,16 +54,29 @@ const ShowBoard = ({resetPomodoroCounter, updateBoardPomoCounter, dataBoard, dat
     <div className={`flex flex-col min-h-screen gap-5  transition-colors duration-500 bg-gradient-to-b  ${darkMode ? `from-20% from-${color}-900   via-${color}-800   to-${color}-500`
     : `  from-20% from-${color}-500 via-${color}-400 to-${color}-300`}  `}> 
        <Header handleSignOut={handleSignOut} darkMode={darkMode} setDarkMode={setDarkMode} user={user}></Header>
-        <div className=' flex gap-5 mt-5 ml-8 text-xl items-center text-white'>
-            <ul className='list-disc ml-5 flex gap-10'>
+        <div className=' flex gap-5 mt-5 ml-8 text-xl items-center justify-left text-white'>
+            <ul className='list-disc ml-5 flex gap-10 '>
                 <li className="text-white font-semibold ">{board?.title}</li>
-                <li>Pomodoro Counter: {board?.timerCounter}</li>
-                <li>{board?.timerHours}h : {board?.timerMinutes}m</li>
             </ul>
-            <button onClick={() => board?.id && resetPomodoroCounter(board.id)} className={`cursor-pointer hover:-rotate-360 text-2xl pt-2 pb-2 pr-4 pl-4  rounded-lg hover:scale-90
-                duration-500 `}>
-                <i className="fa-solid fa-arrow-rotate-left"></i>
-            </button>
+            <div className='flex items-center'>
+                <ul className='list-disc ml-5 flex gap-5 '>
+                    <li>Pomodoro Counter: {board?.timerCounter}</li>
+                    <li className='flex gap-2 list-disc'>
+                        {board?.timerHours && board?.timerHours > 0 ? <p>{board?.timerHours}h</p> :<p className='hidden'></p>}
+                        {board?.timerMinutes && board?.timerMinutes > 0 ? <p>{board?.timerMinutes}m</p> :<p className='hidden'></p>}
+                    </li>
+                </ul>
+                <div className='group relative'>
+                    <button onClick={() => board?.id && resetPomodoroCounter(board.id)} className={`cursor-pointer z-20  hover:-rotate-360 text-2xl pt-2 pb-2 pr-4 pl-4  rounded-lg hover:scale-90
+                        duration-500 `}>
+                        <i className="fa-solid fa-arrow-rotate-left text-xl"></i>
+                    </button>
+                    <p className='absolute flex items-center justify-center p-1 -top-3 left-10 bg-black/40 text-sm w-[150px]
+                     rounded-xl opacity-0 group-hover:opacity-100 duration-500 z-0 transition-opacity'>
+                        Reset the Counter
+                    </p>
+                </div>
+            </div>
            
         </div>
         <div className='flex gap-1 ml-5  overflow-x-auto scrollbar  '>
