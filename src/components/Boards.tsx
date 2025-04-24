@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import  CreateNewTemplateModal from "./CreateNewTemplateModal";
 import { AnimatePresence } from "framer-motion";
 import Header2 from "./Header2";
+import ConfirmDeleting from "./ConfirmDeleting";
 
 
 
@@ -26,6 +27,7 @@ const Boards = ({ addBoard, dataBoard, handleSignOut, user, darkMode, deleteBoar
   const [updatedBoardTitle, setUpdatedBoardTitle] = useState('')
   const [templateId, setTemplateId] = useState('')
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [boardId, setBoardId] = useState('')
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -72,6 +74,10 @@ const Boards = ({ addBoard, dataBoard, handleSignOut, user, darkMode, deleteBoar
                 {openCreateBoard && <CreateNewTemplateModal background={background} setBackground={setBackground} setOpenCreateBoard={setOpenCreateBoard} openCreateBoard={openCreateBoard} 
                 darkMode={darkMode} handleSubmit={handleSubmit} boardTitle={boardTitle} setBoardTitle={setBoardTitle}/>}
               </AnimatePresence>
+              
+              <AnimatePresence>
+                {isDeleteOpen && <ConfirmDeleting deleteFunc={deleteBoard} itemsId={boardId} title='Project' isDeleteOpen={isDeleteOpen} setIsDeleteOpen={setIsDeleteOpen}/>}
+              </AnimatePresence>
             </div>
 
             {dataBoard.filter(val => {return val.title.toLocaleLowerCase().includes(search.toLowerCase())}).map((data) => {
@@ -93,7 +99,7 @@ const Boards = ({ addBoard, dataBoard, handleSignOut, user, darkMode, deleteBoar
                         </form>
                     )}
                     <div className="opacity-0  group-hover:opacity-100 group-hover:right-2 absolute  bottom-1 flex right-0 gap-2 items-center duration-500">
-                      <button onClick={() => {deleteBoard(data.id)}} className="hover:scale-90 duration-200 cursor-pointer"><i className="fa-solid fa-trash"></i></button>
+                      <button onClick={() => {setIsDeleteOpen(true), setBoardId(data.id)}} className="hover:scale-90 duration-200 cursor-pointer"><i className="fa-solid fa-trash"></i></button>
                       <button onClick={() => {setUpdatedBoardTitle(data.title),setTemplateId(data.id)}} className="hover:scale-90 duration-200 cursor-pointer"><i className="fa-solid fa-pen-to-square"></i></button>
                     </div>
                 </div> 

@@ -3,7 +3,8 @@ import Tasks from './Tasks';
 import AddNewTaskButton from './AddNewTaskButton';
 import { useState } from 'react';
 import DropArea from './DropArea';
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import ConfirmDeleting from './ConfirmDeleting';
 
 interface ColumnsForms {
     addTask: (title: string, columnId: string, boardId: string | null) => void;
@@ -32,6 +33,8 @@ interface ColumnsForms {
 const Columns = ({ updateBoardPomoCounter, addTask ,dataTimer, updateTask, updateTaskOrder, updateTaskTimerFirebase, addTimer, updateTaskHasTimer, updateFixedTime, pauseStartTaskTimer, deleteTask, setDataTask, updateTaskTimer, updateTaskDescription, toggleCompleteTask, dataTask, dataColumn, board, deleteColumn,  updateColumn, darkMode}: ColumnsForms) => {
     const [updatedColumnTitle, setUpdatedColumnTitle] = useState('')
     const [columnId, setColumnId] = useState('') 
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+    const [columnIdForDelete, setColumnIdForDelete ] = useState('')
     
     const handleChangeColumnName = (e:React.FormEvent) => {
         e.preventDefault()
@@ -140,13 +143,16 @@ const Columns = ({ updateBoardPomoCounter, addTask ,dataTimer, updateTask, updat
             {dataColumn.length >= 1 && dataColumn.map((column) => (
                 column.boardId === board?.id && (
                     <div key={column.id} className='flex flex-col'>
+                        <AnimatePresence>
+                            {isDeleteOpen && <ConfirmDeleting title='Column' deleteFunc={deleteColumn} itemsId={columnIdForDelete} isDeleteOpen={isDeleteOpen} setIsDeleteOpen={setIsDeleteOpen}/>}
+                        </AnimatePresence>
                         <motion.div  className={` w-[300px]  mb-2  max-h-[75vh]  transition-all duration-500 ${darkMode ? 'bg-[#0d0d0ea2] ' :
                             'bg-[#d8d8d8a8]'}  ml-2 self-baseline rounded-lg  flex flex-col `} >
                             {columnId !== column.id ? (
                                 <div className={`flex justify-between pl-2 pr-2 pb-2 pt-2 items-center sticky top-0 z-10 `}>
                                     <h1 className="pt-1 pl-1 font-semibold ">{column.title}</h1>
                                     <div className='flex gap-2 place-items-end'>
-                                        <button className='hover:scale-90 duration-200 cursor-pointer text-sm' onClick={() => {deleteColumn(column.id)}}><i className="fa-solid fa-trash"></i></button>
+                                        <button className='hover:scale-90 duration-200 cursor-pointer text-sm' onClick={() => {setIsDeleteOpen(true), setColumnIdForDelete(column.id)}}><i className="fa-solid fa-trash"></i></button>
                                         <button className='hover:scale-90 duration-200 cursor-pointer text-sm' onClick={() => {setColumnId(column.id), setUpdatedColumnTitle(column.title)}}><i className="fa-solid fa-pen-to-square"></i></button>
                                     </div>
                                 </div>

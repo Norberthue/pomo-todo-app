@@ -54,11 +54,11 @@ const ShowBoard = ({resetPomodoroCounter, updateBoardPomoCounter, dataBoard, dat
     <div className={`flex flex-col min-h-screen gap-5  transition-colors duration-500 bg-gradient-to-b  ${darkMode ? `from-20% from-${color}-900   via-${color}-800   to-${color}-500`
     : `  from-20% from-${color}-500 via-${color}-400 to-${color}-300`}  `}> 
        <Header handleSignOut={handleSignOut} darkMode={darkMode} setDarkMode={setDarkMode} user={user}></Header>
-        <div className=' flex gap-5 mt-5 ml-8 text-xl items-center justify-left text-white'>
+        <div className=' flex flex-col sm:flex-row gap-5 mt-5 ml-8 sm:text-xl sm:items-center justify-left text-white'>
             <ul className='list-disc ml-5 flex gap-10 '>
                 <li className="text-white font-semibold ">{board?.title}</li>
             </ul>
-            <div className='flex items-center'>
+            <div className=' sm:flex sm:items-center'>
                 <ul className='list-disc ml-5 flex gap-5 '>
                     <li>Pomodoro Counter: {board?.timerCounter}</li>
                     <li className='flex gap-2 list-disc'>
@@ -67,7 +67,7 @@ const ShowBoard = ({resetPomodoroCounter, updateBoardPomoCounter, dataBoard, dat
                     </li>
                 </ul>
                 <div className='group relative'>
-                    <button onClick={() => board?.id && resetPomodoroCounter(board.id)} className={`cursor-pointer z-20  hover:-rotate-360 text-2xl pt-2 pb-2 pr-4 pl-4  rounded-lg hover:scale-90
+                    <button onClick={() => board?.id && resetPomodoroCounter(board.id)} className={`cursor-pointer z-20  hover:-rotate-360 sm:text-2xl pt-2 pb-2 pr-4 pl-4  rounded-lg hover:scale-90
                         duration-500 `}>
                         <i className="fa-solid fa-arrow-rotate-left text-xl"></i>
                     </button>

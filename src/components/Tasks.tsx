@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import ModalTasks from './ModalTasks';
 import linkifyHtml from 'linkify-html';
 import * as linkify from 'linkifyjs';
+import ConfirmDeleting from './ConfirmDeleting';
 
 interface TasksForms {
     dataTask: Task[];
@@ -37,6 +38,8 @@ const Tasks = ({updateBoardPomoCounter, darkMode, dataTask, dataTimer, updateTas
     const textareaRef = useRef<HTMLTextAreaElement | null>(null)
     const [isTaskOpen, setIsTaskOpen] = useState(false)
     const [getTask, setGetTask] = useState<string>('')
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+    const [taskIdForDelete, setTaskIdForDelete ] = useState('')
     
     const handleChangeTaskName = (e: React.FormEvent | KeyboardEvent) => {
         e.preventDefault()
@@ -77,6 +80,7 @@ const Tasks = ({updateBoardPomoCounter, darkMode, dataTask, dataTimer, updateTas
         {dataTask.length >= 1 && dataTask.map((task) => (
             task.colId === column.id && (
                 <div key={task.id}>
+                    {isDeleteOpen && <ConfirmDeleting  title='Task' deleteFunc={deleteTask} itemsId={taskIdForDelete} isDeleteOpen={isDeleteOpen} setIsDeleteOpen={setIsDeleteOpen}/>}
                     <DropArea darkMode={darkMode} beforeId={task.id} column={column.id}></DropArea>
                     <motion.div layout='preserve-aspect' layoutId={task.id} 
                       draggable onDragStart={(e) => handleDragStart(e, task)} className={`group  ${darkMode ? 'text-[#f8f8f8ee] bg-[#1d2125] hover:bg-[#2e3336] ' : 
@@ -95,7 +99,7 @@ const Tasks = ({updateBoardPomoCounter, darkMode, dataTask, dataTimer, updateTas
                                     </div>
                                     
                                     <div className='flex gap-2 opacity-0  group-hover:right-1 absolute right-0 group-hover:opacity-100 duration-500 pr-2'>
-                                        <button className='hover:scale-90 duration-200 cursor-pointer text-sm' onClick={() => {deleteTask(task.id)}}><i className="fa-solid fa-trash"></i></button>
+                                        <button className='hover:scale-90 duration-200 cursor-pointer text-sm' onClick={() => {setIsDeleteOpen(true), setTaskIdForDelete(task.id)}}><i className="fa-solid fa-trash"></i></button>
                                         <button className='hover:scale-90 duration-200 cursor-pointer text-sm' onClick={() => {setTaskId(task.id), setUpdatedTaskTitle(stripHtmlTags(task.title))}}><i className="fa-solid fa-pen-to-square"></i></button>
                                     </div>
                                 </div>
