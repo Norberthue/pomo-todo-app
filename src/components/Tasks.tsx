@@ -98,7 +98,7 @@ const Tasks = ({updateBoardPomoCounter, darkMode, dataTask, dataTimer, updateTas
                                         </div>
                                     </div>
                                     
-                                    <div className='flex gap-2 opacity-0  group-hover:right-1 absolute right-0 group-hover:opacity-100 duration-500 pr-2'>
+                                    <div className='flex gap-2 lg:opacity-0  group-hover:right-1 absolute right-0 group-hover:opacity-100 duration-500 pr-2'>
                                         <button className='hover:scale-90 duration-200 cursor-pointer text-sm' onClick={() => {setIsDeleteOpen(true), setTaskIdForDelete(task.id)}}><i className="fa-solid fa-trash"></i></button>
                                         <button className='hover:scale-90 duration-200 cursor-pointer text-sm' onClick={() => {setTaskId(task.id), setUpdatedTaskTitle(stripHtmlTags(task.title))}}><i className="fa-solid fa-pen-to-square"></i></button>
                                     </div>

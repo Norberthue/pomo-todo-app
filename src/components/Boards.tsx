@@ -89,8 +89,8 @@ const Boards = ({ addBoard, dataBoard, handleSignOut, user, darkMode, deleteBoar
                           <h1 className="p-2 h-[60px] text-white">{data.title}</h1>
                         </Link>) : ( 
                         <form onSubmit={(e) => {handleChangeTemplateName(e)}} className=" text-white items-center flex gap-1">
-                          <input maxLength={38}  value={updatedBoardTitle} onChange={(e) => {setUpdatedBoardTitle(e.target.value)}} autoFocus className={` mt-1 ml-1 placeholder-white border-2 border-[#5a626957]
-                              duration-100 
+                          <input maxLength={38}  value={updatedBoardTitle} onChange={(e) => {setUpdatedBoardTitle(e.target.value)}} autoFocus 
+                          className={` mt-1 ml-1 placeholder-white border-2 border-[#5a626957] duration-100 
                             rounded-sm pt-1 pb-1 pl-2  outline-none `}/>
                           <div className="flex items-center  gap-1">
                             <button type='submit' className="hover:bg-slate-600 rounded-sm duration-200  pt-1 pb-1 pl-2 pr-2"><i className="fa-solid fa-check"></i></button>
@@ -98,7 +98,7 @@ const Boards = ({ addBoard, dataBoard, handleSignOut, user, darkMode, deleteBoar
                           </div>
                         </form>
                     )}
-                    <div className="opacity-0  group-hover:opacity-100 group-hover:right-2 absolute  bottom-1 flex right-0 gap-2 items-center duration-500">
+                    <div className="lg:opacity-0  group-hover:opacity-100 group-hover:right-2 absolute  bottom-1 flex right-2 lg:right-0 gap-2 items-center duration-500">
                       <button onClick={() => {setIsDeleteOpen(true), setBoardId(data.id)}} className="hover:scale-90 duration-200 cursor-pointer"><i className="fa-solid fa-trash"></i></button>
                       <button onClick={() => {setUpdatedBoardTitle(data.title),setTemplateId(data.id)}} className="hover:scale-90 duration-200 cursor-pointer"><i className="fa-solid fa-pen-to-square"></i></button>
                     </div>
