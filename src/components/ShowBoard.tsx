@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import CreateNewColumn from './CreateNewColumn';
 import Columns from './Columns';
 import Header from './Header';
-
+import { useTheme } from '../ThemeContext';
 
 interface ShowBoardProps  {
     dataBoard: Board[];
@@ -12,8 +12,6 @@ interface ShowBoardProps  {
     dataTask: Task[];
     addColumn: (title: string, boardId: string | null) => void;
     addTask: (title: string, columnId: string, boardId: string | null) => void;
-    darkMode: boolean;
-    setDarkMode: (set:boolean) => void ;
     deleteColumn: (id:string) => void;
     updateColumn: (id:string, newTitle:string) => void;
     updateTask: (id:string, newTitle:string) => void;
@@ -35,10 +33,11 @@ interface ShowBoardProps  {
     resetPomodoroCounter: (id:string) => void;
 }
 
-const ShowBoard = ({resetPomodoroCounter, updateBoardPomoCounter, dataBoard, dataColumn, dataTimer, user, updateTaskTimerFirebase, handleSignOut, updateTaskOrder, updateTaskHasTimer, updateFixedTime, addTimer, pauseStartTaskTimer, setDataTask, addColumn, updateTaskTimer, updateTaskDescription, toggleCompleteTask, updateColumn, deleteColumn, addTask,  updateTask, deleteTask, dataTask, darkMode, setDarkMode}: ShowBoardProps) => {
+const ShowBoard = ({resetPomodoroCounter, updateBoardPomoCounter, dataBoard, dataColumn, dataTimer, user, updateTaskTimerFirebase, handleSignOut, updateTaskOrder, updateTaskHasTimer, updateFixedTime, addTimer, pauseStartTaskTimer, setDataTask, addColumn, updateTaskTimer, updateTaskDescription, toggleCompleteTask, updateColumn, deleteColumn, addTask,  updateTask, deleteTask, dataTask}: ShowBoardProps) => {
     const {slug} = useParams()
     const [board, setBoard] = useState<Board | null>(null)
     const color = board?.bg 
+    const {darkMode} = useTheme();
    
     useEffect(()=> {
         const findDetail = dataBoard.filter((board) => board.id === slug)
@@ -53,7 +52,7 @@ const ShowBoard = ({resetPomodoroCounter, updateBoardPomoCounter, dataBoard, dat
     return (
     <div className={`flex flex-col min-h-screen gap-5  transition-colors duration-500 bg-gradient-to-b  ${darkMode ? `from-20% from-${color}-900   via-${color}-800   to-${color}-500`
     : `  from-20% from-${color}-500 via-${color}-400 to-${color}-300`}  `}> 
-       <Header handleSignOut={handleSignOut} darkMode={darkMode} setDarkMode={setDarkMode} user={user}></Header>
+       <Header handleSignOut={handleSignOut} user={user}></Header>
         <div className=' flex flex-col sm:flex-row gap-5 mt-5 ml-8 sm:text-xl sm:items-center justify-left text-white'>
             <ul className='list-disc ml-5 flex gap-10 '>
                 <li className="text-white font-semibold ">{board?.title}</li>
@@ -80,10 +79,10 @@ const ShowBoard = ({resetPomodoroCounter, updateBoardPomoCounter, dataBoard, dat
            
         </div>
         <div className='flex gap-1 ml-5  overflow-x-auto scrollbar  '>
-            <CreateNewColumn board={board} addColumn={addColumn} darkMode={darkMode}/>
+            <CreateNewColumn board={board} addColumn={addColumn}/>
             <Columns updateBoardPomoCounter={updateBoardPomoCounter} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskOrder={updateTaskOrder} updateTaskHasTimer={updateTaskHasTimer} dataTimer={dataTimer} pauseStartTaskTimer={pauseStartTaskTimer}   updateFixedTime={updateFixedTime} addTimer={ addTimer} updateTaskTimer={updateTaskTimer}
                 updateTaskDescription={updateTaskDescription} setDataTask={setDataTask} board={board} deleteColumn={deleteColumn} updateTask={updateTask}
-                toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask}  updateColumn={updateColumn} darkMode={darkMode} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
+                toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask}  updateColumn={updateColumn} dataColumn={dataColumn} dataTask={dataTask} addTask={addTask}/>
         </div>
     </div>
   )

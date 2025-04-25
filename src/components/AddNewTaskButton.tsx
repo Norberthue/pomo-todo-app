@@ -2,17 +2,17 @@ import React, { useState } from 'react'
 import { Column } from '../Types'
 import { motion } from 'framer-motion'
 import * as linkify from 'linkifyjs';
+import { useTheme } from '../ThemeContext';
 
 interface AddNewTaskButtonForms {
     addTask: (title: string, columnId: string, boardId: string | null) => void;
-    darkMode: boolean;
     column: Column;
 }
 
-const AddNewTaskButton = ({ addTask, darkMode, column}: AddNewTaskButtonForms) => {
+const AddNewTaskButton = ({ addTask, column}: AddNewTaskButtonForms) => {
     const [taskTitle, setTaskTitle] = useState('')
     const [editId, setEditId] = useState('')  
-    
+    const {darkMode} = useTheme();
     const handleTaskSubmit = (e: React.FormEvent, colId: string, boardId: string | null) => {
         e.preventDefault()
         if (taskTitle.length > 0) {

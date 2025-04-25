@@ -1,18 +1,17 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-
+import { useTheme } from '../ThemeContext';
 
 interface Header2Froms {
     user:any
     search: string;
     setSearch: (search:string) => void;
-    setDarkMode: (darkmode: boolean) => void
-    darkMode: boolean;
     handleSignOut: () => void
 }
 
-const Header2 = ({ handleSignOut ,user, search, setSearch, darkMode, setDarkMode}:Header2Froms) => {
+const Header2 = ({ handleSignOut ,user, search, setSearch}:Header2Froms) => {
     const [openLogInOut, setOpenLogInOut] = useState(false) 
+    const {darkMode, setDarkMode} = useTheme();
   
     return (
     <div className="flex  sm:gap-0  justify-evenly items-center  mt-10 ">

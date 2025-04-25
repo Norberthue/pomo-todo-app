@@ -2,25 +2,25 @@ import { useEffect, useRef, useState } from 'react'
 import {Task, Timer } from '../Types'
 import beep from '../assets/Audio/beep.wav'
 import expolde from '../assets/Audio/clock-alarm.mp3'
+import { useTheme } from '../ThemeContext';
 
 interface TaskTimerProps {
   task: Task
   updateTaskTimer:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
   dataTimer: Timer[];
   pauseStartTaskTimer: (id:string) => void;
-  darkMode: boolean;
   updateFixedTime: (id:string, newBreakTime:number, newPomoTime:number) => void;
   updateTaskTimerFirebase:(id:string, minutes:number, seconds:number, newBreakTime: boolean) => void;
   updateBoardPomoCounter: (id:string, newCounter:number, newMinutes: number) => void;
 }
 
-const TaskTimer = ({updateBoardPomoCounter, darkMode, task, dataTimer, updateFixedTime, updateTaskTimerFirebase, updateTaskTimer ,pauseStartTaskTimer}: TaskTimerProps) => {
+const TaskTimer = ({updateBoardPomoCounter, task, dataTimer, updateFixedTime, updateTaskTimerFirebase, updateTaskTimer ,pauseStartTaskTimer}: TaskTimerProps) => {
   const [isSettingsOn, setIsSettingsOn] = useState(false)
   const timer = dataTimer.filter((data) => data.taskId === task.id)[0]
   const [timerMinutes, setTimerMinutes] = useState<number>(timer.fixedPomodoroTime)
   const [timerBreaks, setTimerBreaks] = useState<number>(timer.fixedBreakTime)
   const workerRef = useRef<Worker | null>(null);
-  
+  const {darkMode} = useTheme();
   const audioBeep = useRef(new Audio(beep)).current;
   const audioAlarm = new Audio(expolde)
   audioAlarm.volume = 0.2

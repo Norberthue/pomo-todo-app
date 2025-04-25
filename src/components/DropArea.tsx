@@ -1,11 +1,13 @@
+import { useTheme } from '../ThemeContext';
 
 interface dropAreaForms {
     beforeId: string | null;
-    darkMode: boolean;
     column: string;
 }   
 
-const DropArea = ({ beforeId , column, darkMode}:dropAreaForms) => {
+const DropArea = ({ beforeId , column}:dropAreaForms) => {
+    
+    const {darkMode} = useTheme();
     return (
         <div
         data-before={beforeId || "-1"}

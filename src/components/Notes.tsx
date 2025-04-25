@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import {Task} from '../Types'
+import { useTheme } from '../ThemeContext';
 
 interface NotesForms {
     task: Task ;
-    darkMode: boolean;
     updateTaskDescription:(id:string, newDescription:string) => void;
 }
 
-
-const Notes = ({task, darkMode, updateTaskDescription}:NotesForms) => {
+const Notes = ({task, updateTaskDescription}:NotesForms) => {
     const [updatedTaskDescriptionValue, setUpdatedTaskDescriptionValue] = useState('') 
     const textareaRef = useRef<HTMLTextAreaElement | null>(null) 
     const [openEditDisc, setOpenEditDisc] = useState(false) 
-    
+    const {darkMode} = useTheme();
     const handleChangeTaskDesc = (e: React.FormEvent | KeyboardEvent) => {
         e.preventDefault()
         if (updatedTaskDescriptionValue.length >= 1) {

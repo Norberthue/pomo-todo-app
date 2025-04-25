@@ -7,13 +7,14 @@ import { db,auth } from './FirebaseConfig'; // Import your Firebase configuratio
 import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc,orderBy, query, serverTimestamp, where } from 'firebase/firestore';
 import Auth from './components/Auth';
 import { signOut } from 'firebase/auth';
+import { useTheme } from './ThemeContext';
 
 const App: React.FC = () => {
   const [dataBoard, setDataBoard] = useState<Board[]>([]);
   const [dataColumn, setDataColumn] = useState<Column[]>([]);
   const [dataTask, setDataTask] = useState<Task[]>([]);
   const [dataTimer, setDataTimer] = useState<Timer[]>([]);
-  const [darkMode, setDarkMode] = useState(true);
+  const {darkMode, setDarkMode} = useTheme();
   const [user, setUser] = useState(auth.currentUser);
 
   // Cache for authenticated user
@@ -160,7 +161,6 @@ const App: React.FC = () => {
   useEffect(() => {
     const mode = JSON.parse(localStorage.getItem('mode') || 'true');
     setDarkMode(mode);
-    
   }, []);
 
   useEffect(() => {
@@ -439,8 +439,16 @@ const App: React.FC = () => {
 
    </div>
       <Routes>
-          <Route path='/' element={<Boards updateBoard={updateBoard} handleSignOut={handleSignOut} user={user} setDarkMode={setDarkMode} deleteBoard={deleteBoard} darkMode={darkMode} dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
-          <Route path=':slug' element={<ShowBoard resetPomodoroCounter={resetPomodoroCounter} updateBoardPomoCounter={updateBoardPomoCounter} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskOrder={updateTaskOrder} user={user}  handleSignOut={handleSignOut} updateTaskHasTimer={updateTaskHasTimer } deleteColumn={deleteColumn} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask} updateColumn={updateColumn} setDarkMode={setDarkMode} darkMode={darkMode} dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask}  addColumn={addColumn} dataBoard={dataBoard}></ShowBoard>}></Route>
+          <Route path='/' element={<Boards updateBoard={updateBoard} handleSignOut={handleSignOut} user={user} deleteBoard={deleteBoard}  dataBoard={dataBoard} addBoard={addBoard}></Boards>}></Route>
+          <Route path=':slug' element={
+            <ShowBoard resetPomodoroCounter={resetPomodoroCounter} updateBoardPomoCounter={updateBoardPomoCounter} updateTaskTimerFirebase={updateTaskTimerFirebase}
+              updateTaskOrder={updateTaskOrder} user={user}  handleSignOut={handleSignOut} updateTaskHasTimer={updateTaskHasTimer } deleteColumn={deleteColumn}
+              updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer}  dataTimer={dataTimer} addTimer={ addTimer} updateTaskTimer={updateTaskTimer}
+              updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} deleteTask={deleteTask} updateTask={updateTask}
+              updateColumn={updateColumn}dataColumn={dataColumn} addTask={addTask} dataTask={dataTask} setDataTask={setDataTask} 
+              addColumn={addColumn} dataBoard={dataBoard}>
+            </ShowBoard>}>
+          </Route>
           <Route path='/auth' element={<Auth darkMode={darkMode} setDarkMode={setDarkMode} onAuthSuccess={fetchData}></Auth>}></Route>
       </Routes>
    </div>

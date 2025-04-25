@@ -1,14 +1,15 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { useTheme } from '../ThemeContext';
+
 interface HeaderForms {
-    darkMode: boolean
-    setDarkMode: (darkmode: boolean) => void
     user: any;
     handleSignOut: () => void
 }
 
-const Header = ({darkMode  ,setDarkMode, user,  handleSignOut}: HeaderForms) => {
+const Header = ({user,  handleSignOut}: HeaderForms) => {
     const [openLogInOut, setOpenLogInOut] = useState(false) 
+    const {darkMode, setDarkMode} = useTheme();
   return (
     <div className={`flex text-sm sm:text-xl ${darkMode ? 'bg-blur1': 'bg-blur2'} duration-600 text-white items-center justify-between pl-6 pr-6 pt-5 pb-5 border-b-[1px] border-[#5a626957]`}>
           <div className=''>

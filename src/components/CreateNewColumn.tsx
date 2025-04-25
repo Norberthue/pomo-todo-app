@@ -1,16 +1,18 @@
 import React, { useState } from 'react'
 import { Board} from '../Types'
+import { useTheme } from '../ThemeContext';
 
 interface CreateNewColumnForms {
-    darkMode: boolean
+   
     addColumn: (title: string, boardId: string | null) => void;
     board: Board | null
 }
 
 
-const CreateNewColumn = ({addColumn, darkMode, board}: CreateNewColumnForms) => {
+const CreateNewColumn = ({addColumn, board}: CreateNewColumnForms) => {
     const [openCreateColumn, setOpenCreateColumn] = useState(false) 
     const [columnTitle, setColumnTitle] = useState('')
+    const {darkMode} = useTheme();
     
     const handleSubmit = (e:React.FormEvent ) => {
         e.preventDefault()

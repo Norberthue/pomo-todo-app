@@ -5,13 +5,13 @@ import { useState } from 'react';
 import DropArea from './DropArea';
 import { AnimatePresence, motion } from "framer-motion";
 import ConfirmDeleting from './ConfirmDeleting';
+import { useTheme } from '../ThemeContext';
 
 interface ColumnsForms {
     addTask: (title: string, columnId: string, boardId: string | null) => void;
     dataTask: Task[];
     dataColumn: Column[];
     board: Board | null;
-    darkMode: boolean;
     deleteColumn: (id:string) => void;
     updateColumn: (id:string, newTitle:string) => void;
     updateTask: (id:string, newTitle:string) => void;
@@ -30,11 +30,12 @@ interface ColumnsForms {
     updateBoardPomoCounter: (id:string, newCounter:number, newMinutes: number) => void;
 }
 
-const Columns = ({ updateBoardPomoCounter, addTask ,dataTimer, updateTask, updateTaskOrder, updateTaskTimerFirebase, addTimer, updateTaskHasTimer, updateFixedTime, pauseStartTaskTimer, deleteTask, setDataTask, updateTaskTimer, updateTaskDescription, toggleCompleteTask, dataTask, dataColumn, board, deleteColumn,  updateColumn, darkMode}: ColumnsForms) => {
+const Columns = ({ updateBoardPomoCounter, addTask ,dataTimer, updateTask, updateTaskOrder, updateTaskTimerFirebase, addTimer, updateTaskHasTimer, updateFixedTime, pauseStartTaskTimer, deleteTask, setDataTask, updateTaskTimer, updateTaskDescription, toggleCompleteTask, dataTask, dataColumn, board, deleteColumn,  updateColumn}: ColumnsForms) => {
     const [updatedColumnTitle, setUpdatedColumnTitle] = useState('')
     const [columnId, setColumnId] = useState('') 
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
     const [columnIdForDelete, setColumnIdForDelete ] = useState('')
+    const {darkMode} = useTheme();
     
     const handleChangeColumnName = (e:React.FormEvent) => {
         e.preventDefault()
@@ -172,9 +173,9 @@ const Columns = ({ updateBoardPomoCounter, addTask ,dataTimer, updateTask, updat
                                 <Tasks updateBoardPomoCounter={updateBoardPomoCounter} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer}
                                     updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer}
                                     updateTaskDescription={updateTaskDescription} dataTask={dataTask} toggleCompleteTask={toggleCompleteTask} updateTask={updateTask}
-                                    deleteTask={deleteTask} darkMode={darkMode} column={column} />
-                                <DropArea darkMode={darkMode} beforeId={null} column={column.id}></DropArea>
-                                <AddNewTaskButton  column={column}  darkMode={darkMode} addTask={addTask}/>
+                                    deleteTask={deleteTask} column={column} />
+                                <DropArea  beforeId={null} column={column.id}></DropArea>
+                                <AddNewTaskButton  column={column} addTask={addTask}/>
                             </div>
                         </motion.div>
                     </div>

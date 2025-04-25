@@ -5,21 +5,18 @@ import  CreateNewTemplateModal from "./CreateNewTemplateModal";
 import { AnimatePresence } from "framer-motion";
 import Header2 from "./Header2";
 import ConfirmDeleting from "./ConfirmDeleting";
-
-
+import { useTheme } from '../ThemeContext';
 
 interface BoardsForms {
   addBoard: (title: string, bg:string) => void;
   dataBoard: Board[];
-  darkMode: boolean;
   deleteBoard: (id: string) => void
-  setDarkMode: (darkmode: boolean) => void
   updateBoard: (id:string, newTitle:string) => void
   handleSignOut: () => void
   user: any;
 }
 
-const Boards = ({ addBoard, dataBoard, handleSignOut, user, darkMode, deleteBoard, setDarkMode, updateBoard}: BoardsForms) => {
+const Boards = ({ addBoard, dataBoard, handleSignOut, user, deleteBoard, updateBoard}: BoardsForms) => {
   const [openCreateBoard, setOpenCreateBoard] = useState<boolean>(false)
   const [boardTitle, setBoardTitle] = useState<string>('')
   const [background, setBackground] = useState('slate')
@@ -28,7 +25,7 @@ const Boards = ({ addBoard, dataBoard, handleSignOut, user, darkMode, deleteBoar
   const [templateId, setTemplateId] = useState('')
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [boardId, setBoardId] = useState('')
-  
+  const {darkMode} = useTheme();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (boardTitle.length > 0 ) {
@@ -49,7 +46,7 @@ const Boards = ({ addBoard, dataBoard, handleSignOut, user, darkMode, deleteBoar
 
   return (
     <div className="flex flex-col gap-10 ">
-        <Header2 handleSignOut={handleSignOut} user={user} darkMode={darkMode} setDarkMode={setDarkMode} search={search} setSearch={setSearch}></Header2>
+        <Header2 handleSignOut={handleSignOut} user={user} search={search} setSearch={setSearch}></Header2>
         <div className="flex justify-center sm:hidden">
             <form className="relative">
                 <input placeholder="Search templates" value={search} onChange={(e) => {setSearch(e.target.value)}} className={`placeholder-gray-500  focus:ring-2 focus:ring-blue-500 duration-100 

@@ -6,10 +6,10 @@ import ModalTasks from './ModalTasks';
 import linkifyHtml from 'linkify-html';
 import * as linkify from 'linkifyjs';
 import ConfirmDeleting from './ConfirmDeleting';
+import { useTheme } from '../ThemeContext';
 
 interface TasksForms {
     dataTask: Task[];
-    darkMode: boolean;
     column: Column;
     updateTask: (id:string, newTitle:string) => void;
     deleteTask: (id:string) => void;
@@ -32,7 +32,7 @@ const stripHtmlTags = (html: string): string => {
     return div.textContent || div.innerText || '';
 };
 
-const Tasks = ({updateBoardPomoCounter, darkMode, dataTask, dataTimer, updateTaskHasTimer, updateTaskTimerFirebase, deleteTask, updateFixedTime, addTimer, pauseStartTaskTimer, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
+const Tasks = ({updateBoardPomoCounter, dataTask, dataTimer, updateTaskHasTimer, updateTaskTimerFirebase, deleteTask, updateFixedTime, addTimer, pauseStartTaskTimer, updateTask, updateTaskDescription, updateTaskTimer, toggleCompleteTask, column }: TasksForms) => {
     const [updatedTaskTitle, setUpdatedTaskTitle] = useState('')
     const [taskId, setTaskId] = useState('')  
     const textareaRef = useRef<HTMLTextAreaElement | null>(null)
@@ -40,6 +40,7 @@ const Tasks = ({updateBoardPomoCounter, darkMode, dataTask, dataTimer, updateTas
     const [getTask, setGetTask] = useState<string>('')
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
     const [taskIdForDelete, setTaskIdForDelete ] = useState('')
+    const {darkMode} = useTheme();
     
     const handleChangeTaskName = (e: React.FormEvent | KeyboardEvent) => {
         e.preventDefault()
@@ -81,7 +82,7 @@ const Tasks = ({updateBoardPomoCounter, darkMode, dataTask, dataTimer, updateTas
             task.colId === column.id && (
                 <div key={task.id}>
                     {isDeleteOpen && <ConfirmDeleting  title='Task' deleteFunc={deleteTask} itemsId={taskIdForDelete} isDeleteOpen={isDeleteOpen} setIsDeleteOpen={setIsDeleteOpen}/>}
-                    <DropArea darkMode={darkMode} beforeId={task.id} column={column.id}></DropArea>
+                    <DropArea beforeId={task.id} column={column.id}></DropArea>
                     <motion.div layout='preserve-aspect' layoutId={task.id} 
                       draggable onDragStart={(e) => handleDragStart(e, task)} className={`group  ${darkMode ? 'text-[#f8f8f8ee] bg-[#1d2125] hover:bg-[#2e3336] ' : 
                         'text-gray-600  hover:bg-gray-200 bg-white'} 
@@ -115,7 +116,7 @@ const Tasks = ({updateBoardPomoCounter, darkMode, dataTask, dataTimer, updateTas
                             )}
                     </motion.div>
                     <AnimatePresence>
-                        {isTaskOpen && <ModalTasks updateBoardPomoCounter={updateBoardPomoCounter} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} dataTask={dataTask} getTask={getTask} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} darkMode={darkMode}  setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
+                        {isTaskOpen && <ModalTasks updateBoardPomoCounter={updateBoardPomoCounter} updateTaskTimerFirebase={updateTaskTimerFirebase} updateTaskHasTimer={updateTaskHasTimer} addTimer={addTimer} updateFixedTime={updateFixedTime} pauseStartTaskTimer={pauseStartTaskTimer} dataTimer={dataTimer} updateTaskTimer={updateTaskTimer} dataTask={dataTask} getTask={getTask} updateTaskDescription={updateTaskDescription} toggleCompleteTask={toggleCompleteTask} setIsTaskOpen={setIsTaskOpen}></ModalTasks>}
                     </AnimatePresence>
                 </div>
             )
