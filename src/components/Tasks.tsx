@@ -106,7 +106,7 @@ const Tasks = ({updateBoardPomoCounter, dataTask, dataTimer, updateTaskHasTimer,
                                 </div>
                                 ) : ( 
                                 <form onSubmit={(e) => {handleChangeTaskName(e)}} className=" items-center justify-between flex gap-1 text-sm">
-                                    <textarea  onKeyDown={handleUserKeyPress} ref={textareaRef} maxLength={80}  value={updatedTaskTitle} onChange={(e) => {setUpdatedTaskTitle(e.target.value)}} autoFocus className={`  ml-1  border-2 border-[#5a626957]
+                                    <textarea  onKeyDown={handleUserKeyPress} ref={textareaRef} maxLength={120}  value={updatedTaskTitle} onChange={(e) => {setUpdatedTaskTitle(e.target.value)}} autoFocus className={`  ml-1  border-2 border-[#5a626957]
                                     duration-100 rounded-sm pl-2 pr-2 outline-none  field-sizing-content min-w-[200px] max-w-[200px] `}/>
                                     <div className="flex items-center  gap-1 text-white mr-2">
                                         <button type='submit' className="hover:bg-slate-600 rounded-sm duration-200   pl-2 pr-2"><i className="fa-solid fa-check"></i></button>

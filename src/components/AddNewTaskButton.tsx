@@ -40,7 +40,7 @@ const AddNewTaskButton = ({ addTask, column}: AddNewTaskButtonForms) => {
     <div className={`bottom-0  pb-2 pt-1 mt-2 `}>
         {editId === column.id  ? 
                 <motion.form className={` flex flex-col gap-2 `} onSubmit={(e) => {handleTaskSubmit(e, column.id , column.boardId)}}>
-                    <textarea  onKeyDown={handleUserKeyPress}  maxLength={80} autoFocus placeholder='Type name of task...' 
+                    <textarea  onKeyDown={handleUserKeyPress}  maxLength={120} autoFocus placeholder='Type name of task...' 
                         className={`${darkMode ? ' bg-[#34383b] break-words text-white' :
                             'bg-gray-200 text-black placeholder-gray-600'} rounded-lg outline-none 
                             text-sm pt-2 pb-5 pl-2 focus:ring-2 focus:ring-blue-500 `}  value={taskTitle} onChange={(e) => {setTaskTitle(e.target.value)}} >
