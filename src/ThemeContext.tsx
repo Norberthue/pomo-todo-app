@@ -14,8 +14,6 @@ interface ThemeProviderProps {
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     const [darkMode, setDarkMode] = useState<boolean>(false);
 
-   
-
     return (
         <ThemeContext.Provider value={{darkMode, setDarkMode}}>
             {children}
